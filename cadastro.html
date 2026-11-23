@@ -11,7 +11,7 @@
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
     <title>IncluiEdu | Criar conta de professor</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261123c">
 </head>
 <body class="pagina-login" data-pagina="cadastro">
 
@@ -34,21 +34,45 @@
             <circle cx="62" cy="196" r="14" fill="#ff8a65"/><circle cx="270" cy="200" r="9" fill="#18b6a4"/>
         </svg>
     </div>
-        <span class="login-label">CONTA DE PROFESSOR</span>
+        <span class="login-label">COMEÇAR NO INCLUIEDU</span>
         <h1>Criar sua conta</h1>
-        <p>Gratuito para professores. Depois, você mesmo cria o acesso de cada aluno.</p>
+        <p>Escolha quem vai usar a conta.</p>
 
         <form id="formCadastro">
+            <fieldset class="tipo-conta">
+                <legend>Eu sou…</legend>
+                <label class="tipo-card" for="tipoProfessor">
+                    <input type="radio" name="tipoConta" id="tipoProfessor" value="professor" checked>
+                    <span class="tipo-icone" aria-hidden="true">👩‍🏫</span>
+                    <strong>Professor</strong>
+                    <small>Cadastro alunos, adapto atividades e acompanho resultados</small>
+                </label>
+                <label class="tipo-card" for="tipoAluno">
+                    <input type="radio" name="tipoConta" id="tipoAluno" value="aluno">
+                    <span class="tipo-icone" aria-hidden="true">🧒</span>
+                    <strong>Aluno</strong>
+                    <small>Faço minhas atividades, uma etapa de cada vez</small>
+                </label>
+            </fieldset>
+
             <label for="nomeCadastro">Nome completo</label>
             <input type="text" id="nomeCadastro" placeholder="Ex.: Profa. Ana Ribeiro" required autocomplete="name">
-            <label for="emailCadastro">E-mail</label>
-            <input type="email" id="emailCadastro" placeholder="seuemail@email.com" required autocomplete="email">
+            <label for="emailCadastro" id="rotuloEmail">E-mail</label>
+            <input type="email" id="emailCadastro" placeholder="seuemail@email.com" required autocomplete="username" autocapitalize="none">
             <label for="senhaCadastro">Senha</label>
             <input type="password" id="senhaCadastro" placeholder="Mínimo de 6 caracteres" required minlength="6" autocomplete="new-password">
             <label for="senhaConfirma">Confirme a senha</label>
             <input type="password" id="senhaConfirma" placeholder="Repita a senha" required minlength="6" autocomplete="new-password">
-            <label class="check check-inline"><input type="checkbox" id="incluirExemplos" checked><span>Começar com alunos e atividades de exemplo (você pode excluir depois)</span></label>
-            <button class="btn btn-full" type="submit">Criar conta</button>
+
+            <div data-so-aluno hidden>
+                <label for="turmaCadastro">Turma <small>(opcional)</small></label>
+                <input type="text" id="turmaCadastro" placeholder="Ex.: 5º Ano A">
+                <label for="vinculoProfessor">Código da turma ou e-mail do professor <small>(opcional)</small></label>
+                <input type="text" id="vinculoProfessor" placeholder="Ex.: IE-7KQ2PM ou professora@escola.com" autocapitalize="characters" aria-describedby="dicaVinculo">
+                <p class="dica" id="dicaVinculo">O código aparece no painel do professor. Sem código, você recebe atividades de exemplo e pode se vincular depois.</p>
+            </div>
+            <label class="check check-inline" data-so-professor><input type="checkbox" id="incluirExemplos" checked><span>Começar com alunos e atividades de exemplo (você pode excluir depois)</span></label>
+            <button class="btn btn-full" type="submit" id="btnCriarConta">Criar conta de professor</button>
         </form>
 
         <p id="mensagemCadastro" class="mensagem" role="alert"></p>
@@ -63,11 +87,11 @@
     <p style="text-align:center;margin-top:18px"><a href="index.html">← Voltar para o site</a></p>
 </div>
 
-<script src="assets/js/db.js"></script>
-<script src="assets/js/dados.js"></script>
-<script src="assets/js/visual.js"></script>
-<script src="assets/js/ui.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/db.js?v=20261123c"></script>
+<script src="assets/js/dados.js?v=20261123c"></script>
+<script src="assets/js/visual.js?v=20261123c"></script>
+<script src="assets/js/ui.js?v=20261123c"></script>
+<script src="assets/js/app.js?v=20261123c"></script>
 
 </body>
 </html>

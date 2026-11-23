@@ -259,16 +259,101 @@ Paginas.login = async () => {
 };
 
 /* ---------- CADASTRO DO PROFESSOR ---------- */
+/* ---------- CÓDIGO DA TURMA DO PROFESSOR ---------- */
+function gerarCodigo() {
+    const letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const v = crypto.getRandomValues(new Uint8Array(6));
+    return "IE-" + [...v].map(n => letras[n % letras.length]).join("");
+}
+
+async function garantirCodigo(usuario) {
+    if (usuario.codigoTurma) return usuario.codigoTurma;
+    let codigo;
+    do { codigo = gerarCodigo(); } while (await buscarProfessorPorVinculo(codigo));
+    usuario.codigoTurma = codigo;
+    await DB.salvar("usuarios", usuario);
+    return codigo;
+}
+
+async function buscarProfessorPorVinculo(valor) {
+    const v = String(valor || "").trim();
+    if (!v) return null;
+    const porEmail = await DB.primeiro("usuarios", "email", v.toLowerCase());
+    if (porEmail && porEmail.tipo === "professor") return porEmail;
+    const profs = await DB.onde("usuarios", "tipo", "professor");
+    return profs.find(p => (p.codigoTurma || "").toUpperCase() === v.toUpperCase()) || null;
+}
+
+/* Atividades de exemplo para o aluno sem professor vinculado (escopo próprio: professorId negativo) */
+async function criarExemplosAluno(alunoId, escopo) {
+    const ex = await DB.getMeta("modelosExemplo", DADOS_EXEMPLOS);
+    for (const t of ex.atividades) {
+        const mat = App.materias.find(m => m.slug === t.materia);
+        const atvId = await DB.salvar("atividades", { titulo: t.titulo, materiaId: mat ? mat.id : null, turma: t.turma, objetivo: t.objetivo, conteudo: t.conteudo, professorId: escopo, exemplo: true });
+        const modelo = ex.adaptacoes.find(d => d.atividade === t.ref);
+        const estr = modelo ? modelo.estrategias : ESTRATEGIAS_PADRAO.slice(0, 3);
+        await DB.salvar("adaptacoes", { atividadeId: atvId, alunoId, estrategias: estr, texto: modelo ? modelo.texto : gerarTextoAdaptado(t.conteudo, estr),
+            status: "aprovada", professorId: escopo, exemplo: true, concluida: false, estrelas: 0, respostas: {} });
+    }
+}
+
+async function vincularAluno(usuario, professor) {
+    const aluno = await DB.buscar("alunos", usuario.alunoId);
+    const escopoAntigo = usuario.professorId;
+    if (escopoAntigo !== null && escopoAntigo < 0) {
+        await DB.excluirOnde("adaptacoes", "professorId", escopoAntigo);
+        await DB.excluirOnde("atividades", "professorId", escopoAntigo);
+    }
+    await DB.salvar("alunos", Object.assign({}, aluno, { professorId: professor.id }));
+    const atualizado = Object.assign({}, usuario, { professorId: professor.id });
+    await DB.salvar("usuarios", atualizado);
+    return atualizado;
+}
+
+/* ---------- CADASTRO (ALUNO OU PROFESSOR) ---------- */
 Paginas.cadastro = async () => {
+    const aplicarTipo = () => {
+        const tipo = document.querySelector('input[name="tipoConta"]:checked').value;
+        const aluno = tipo === "aluno";
+        document.querySelectorAll("[data-so-aluno]").forEach(el => { el.hidden = !aluno; });
+        document.querySelectorAll("[data-so-professor]").forEach(el => { el.hidden = aluno; });
+        $("#rotuloEmail").textContent = aluno ? "Usuário ou e-mail" : "E-mail";
+        $("#emailCadastro").type = aluno ? "text" : "email";
+        $("#emailCadastro").placeholder = aluno ? "Ex.: laura.5b ou seuemail@email.com" : "seuemail@email.com";
+        $("#nomeCadastro").placeholder = aluno ? "Seu nome" : "Ex.: Profa. Ana Ribeiro";
+        $("#btnCriarConta").textContent = aluno ? "Criar minha conta de aluno" : "Criar conta de professor";
+    };
+    document.querySelectorAll('input[name="tipoConta"]').forEach(r => r.addEventListener("change", aplicarTipo));
+    if (param("tipo") === "aluno") $("#tipoAluno").checked = true;
+    aplicarTipo();
+
     $("#formCadastro").addEventListener("submit", async e => {
         e.preventDefault();
         if ($("#senhaCadastro").value !== $("#senhaConfirma").value) { mensagem("mensagemCadastro", "As senhas não conferem.", "erro"); return; }
+        const tipo = document.querySelector('input[name="tipoConta"]:checked').value;
         try {
-            const id = await criarUsuario({ nome: $("#nomeCadastro").value, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "professor" });
-            if ($("#incluirExemplos").checked) await criarExemplos(id);
-            entrarSessao({ id });
+            if (tipo === "professor") {
+                const id = await criarUsuario({ nome: $("#nomeCadastro").value, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "professor" });
+                await garantirCodigo(await DB.buscar("usuarios", id));
+                if ($("#incluirExemplos").checked) await criarExemplos(id);
+                entrarSessao({ id });
+                mensagem("mensagemCadastro", "Conta criada! Abrindo sua área…", "sucesso");
+                setTimeout(() => { location.href = "dashboard-professor.html?bemvindo=1"; }, 700);
+                return;
+            }
+            const vinculo = $("#vinculoProfessor").value.trim();
+            const professor = vinculo ? await buscarProfessorPorVinculo(vinculo) : null;
+            if (vinculo && !professor) throw new Error("Não encontramos um professor com esse código ou e-mail. Confira ou deixe o campo em branco.");
+            const nome = $("#nomeCadastro").value.trim();
+            const uid = await criarUsuario({ nome, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "aluno" });
+            const escopo = professor ? professor.id : -uid;
+            const alunoId = await DB.salvar("alunos", { nome, turma: $("#turmaCadastro").value.trim() || "A definir", caracteristicas: "", recursos: "", professorId: escopo, autoCadastro: true });
+            const u = await DB.buscar("usuarios", uid);
+            await DB.salvar("usuarios", Object.assign({}, u, { alunoId, professorId: escopo }));
+            if (!professor) await criarExemplosAluno(alunoId, escopo);
+            entrarSessao({ id: uid });
             mensagem("mensagemCadastro", "Conta criada! Abrindo sua área…", "sucesso");
-            setTimeout(() => { location.href = "dashboard-professor.html?bemvindo=1"; }, 700);
+            setTimeout(() => { location.href = "dashboard-aluno.html?bemvindo=1"; }, 700);
         } catch (erro) {
             mensagem("mensagemCadastro", erro.message, "erro");
         }
@@ -284,6 +369,7 @@ Paginas.dashboardProfessor = async () => {
     $("#totalAdaptacoes").textContent = d.adaptacoes.length;
     $("#totalResultados").textContent = d.resultados.length;
     if (param("bemvindo")) $("#boasVindas").hidden = false;
+    document.querySelectorAll("[data-codigo-turma]").forEach(async el => { el.textContent = await garantirCodigo(App.usuario); });
     const temExemplo = [...d.alunos, ...d.atividades].some(r => r.exemplo);
     $("#avisoExemplos").hidden = !temExemplo;
     $("#btnExcluirExemplos")?.addEventListener("click", async () => {
@@ -705,6 +791,8 @@ Paginas.materiasProfessor = async () => {
 Paginas.configuracoes = async () => {
     if (!exigir("professor")) return;
     $("#cfgNome").value = App.usuario.nome;
+    const codigo = await garantirCodigo(App.usuario);
+    document.querySelectorAll("[data-codigo-turma]").forEach(el => { el.textContent = codigo; });
     $("#cfgEmail").value = App.usuario.email;
     $("#formPerfil").addEventListener("submit", async e => {
         e.preventDefault();
@@ -780,6 +868,20 @@ async function dadosAluno() {
 
 Paginas.dashboardAluno = async () => {
     if (!exigir("aluno")) return;
+    const semProfessor = App.usuario.professorId === null || App.usuario.professorId < 0;
+    const caixa = $("#vinculoAluno");
+    if (caixa) {
+        caixa.hidden = !semProfessor;
+        $("#formVinculo")?.addEventListener("submit", async e => {
+            e.preventDefault();
+            const prof = await buscarProfessorPorVinculo($("#codigoVinculo").value);
+            if (!prof) { mensagem("msgVinculo", "Código ou e-mail não encontrado.", "erro"); return; }
+            if (!(await confirmar(`Vincular sua conta a ${prof.nome}? As atividades de exemplo serão trocadas pelas atividades do professor.`, { titulo: "Vincular professor", ok: "Vincular" }))) return;
+            App.usuario = await vincularAluno(App.usuario, prof);
+            avisar("Pronto! Agora seu professor pode preparar atividades para você.");
+            setTimeout(() => location.reload(), 900);
+        });
+    }
     const { adaptacoes, atividades } = await dadosAluno();
     const feitas = adaptacoes.filter(a => a.concluida).length;
     const estrelas = adaptacoes.reduce((s, a) => s + (a.estrelas || 0), 0);

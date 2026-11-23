@@ -11,7 +11,7 @@
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
     <title>IncluiEdu | Área do Aluno</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261123c">
 </head>
 <body data-pagina="dashboardAluno">
 
@@ -42,6 +42,17 @@
         </div>
     </div>
 
+    <section class="dashboard-card vinculo-aluno" id="vinculoAluno" hidden>
+        <h2>🔗 Tem um professor no IncluiEdu?</h2>
+        <p>Por enquanto você está com atividades de exemplo. Digite o código da turma ou o e-mail do seu professor para receber as atividades dele.</p>
+        <form id="formVinculo" class="form-linha">
+            <label for="codigoVinculo" class="sr-only">Código da turma ou e-mail do professor</label>
+            <input type="text" id="codigoVinculo" placeholder="Ex.: IE-7KQ2PM" required>
+            <button class="btn" type="submit">Vincular</button>
+        </form>
+        <p id="msgVinculo" class="mensagem" role="status"></p>
+    </section>
+
     <h2 class="titulo-secao">🏅 Minhas conquistas</h2>
     <div class="conquistas" id="conquistas"></div>
 
@@ -64,11 +75,11 @@
     </div>
 </main>
 
-<script src="assets/js/db.js"></script>
-<script src="assets/js/dados.js"></script>
-<script src="assets/js/visual.js"></script>
-<script src="assets/js/ui.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/db.js?v=20261123c"></script>
+<script src="assets/js/dados.js?v=20261123c"></script>
+<script src="assets/js/visual.js?v=20261123c"></script>
+<script src="assets/js/ui.js?v=20261123c"></script>
+<script src="assets/js/app.js?v=20261123c"></script>
 
 </body>
 </html>

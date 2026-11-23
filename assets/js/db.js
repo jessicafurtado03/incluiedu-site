@@ -39,9 +39,19 @@ const DB = {
                         store.createIndex(idx, campo, { unique: !!unico }));
                 });
             };
-            req.onsuccess = () => { this._conexao = req.result; resolve(req.result); };
+            req.onsuccess = () => {
+                const con = req.result;
+                /* Outra aba abriu uma versão nova do banco: fecha e recarrega em vez de travar */
+                con.onversionchange = () => { con.close(); this._conexao = null; location.reload(); };
+                this._conexao = con;
+                resolve(con);
+            };
             req.onerror = () => reject(req.error);
-            req.onblocked = () => reject(new Error("Feche outras abas do IncluiEdu e recarregue a página."));
+            /* Atualização bloqueada por uma aba antiga: avisa e continua esperando (a outra aba recarrega sozinha) */
+            req.onblocked = () => {
+                if (typeof avisar === "function") avisar("Atualizando o banco de dados… se demorar, feche as outras abas do IncluiEdu.", "info");
+                else console.warn("IncluiEdu: atualização do banco aguardando outras abas.");
+            };
         });
     },
 
