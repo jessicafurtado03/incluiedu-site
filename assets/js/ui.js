@@ -182,6 +182,10 @@ function revelar(raiz = document) {
         if (en.isIntersecting) { en.target.classList.add("visivel"); obs.unobserve(en.target); }
     }), { threshold: 0, rootMargin: "0px 0px -8% 0px" });
     itens.forEach(i => obs.observe(i));
+    /* Garantia: nada fica escondido (rolagem rápida, impressão, leitores de tela) */
+    const conferir = () => raiz.querySelectorAll(".revelar:not(.visivel)").forEach(i => { if (i.getBoundingClientRect().top < innerHeight) i.classList.add("visivel"); });
+    window.addEventListener("scroll", conferir, { passive: true });
+    setTimeout(() => raiz.querySelectorAll(".revelar:not(.visivel)").forEach(i => i.classList.add("visivel")), 2500);
 }
 document.querySelectorAll(".section-header, .etapas article, .recursos-grid article, .card-foto, .materia-card, .plano, .dica-card, .bloco-split > *, .fluxo-passo, .aula")
     .forEach(el => el.classList.add("revelar"));

@@ -1944,3 +1944,12 @@ figure figcaption{font-size:.9rem;color:#4a5170;text-align:center;margin-top:6px
 @keyframes voar{0%{opacity:0;transform:translate(-50%,20px)}15%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-60px)}}
 body.sem-movimento .pontos-voando{animation:none}
 @media (max-width:760px){.engaja-graficos{grid-template-columns:1fr}}
+@media print{.revelar{opacity:1!important;transform:none!important}}
+.exercicios-aula .int-lista,.depois .int-lista{padding-left:0;margin-left:0}
+@media (max-width:760px){
+ .aula{padding:16px 12px}
+ .exercicios-aula,.ensino{padding:12px 10px;border-radius:14px}
+ .exercicios-aula .int-item-q,.depois .int-item-q{padding:12px 10px;margin-left:0;margin-right:0}
+ .int-enunciado p{font-size:1rem}
+}
+.int-host,.int-bloco,.int-lista>li,.int-area{min-width:0;max-width:100%}.exercicios-aula{overflow-wrap:anywhere}
