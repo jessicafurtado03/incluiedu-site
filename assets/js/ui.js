@@ -281,3 +281,14 @@ document.querySelectorAll("[data-ano]").forEach(el => { el.textContent = new Dat
         requestAnimationFrame(() => alvo.scrollIntoView({ block: "start", behavior: document.body.classList.contains("sem-movimento") ? "auto" : "smooth" }));
     }));
 })();
+
+/* ---------- SEM CONEXÃO COM O SERVIDOR ---------- */
+function mostrarSemConexao() {
+    if (document.getElementById("avisoSemConexao")) return;
+    const a = document.createElement("div");
+    a.id = "avisoSemConexao"; a.className = "aviso-conexao"; a.setAttribute("role", "alert");
+    a.innerHTML = `<span aria-hidden="true">📡</span><p><strong>Sem conexão com o servidor do IncluiEdu.</strong> Confira a internet. As alterações só são salvas quando a conexão voltar.</p><button type="button" class="btn-mini" onclick="location.reload()">Tentar de novo</button>`;
+    document.body.prepend(a);
+}
+window.addEventListener("offline", mostrarSemConexao);
+window.addEventListener("online", () => { const a = document.getElementById("avisoSemConexao"); if (a) { a.remove(); if (typeof avisar === "function") avisar("Conexão de volta! ✅"); } });

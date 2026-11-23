@@ -11,7 +11,7 @@
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
     <title>IncluiEdu | Configurações</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css?v=20261123h">
+    <link rel="stylesheet" href="style.css?v=20261123i">
 </head>
 <body data-pagina="configuracoes">
 
@@ -77,14 +77,14 @@
 
         <section class="dashboard-card">
             <h2>💾 Banco de dados e backup</h2>
-            <p>O IncluiEdu usa um banco de dados <strong>IndexedDB</strong> dentro do seu navegador. <span id="infoBanco"></span>
-               Os dados não saem deste dispositivo: faça backups regulares e use o arquivo para levar seus dados para outro computador ou navegador.</p>
+            <p>Seus dados ficam guardados na nuvem, na sua conta: entre em qualquer navegador ou aparelho e eles estarão lá. <span id="infoBanco"></span>
+               Se quiser, exporte um backup em arquivo (JSON) ou importe um backup antigo para a sua conta.</p>
             <div class="botoes-linha">
                 <button class="btn" type="button" id="btnExportar">⬇️ Exportar backup (JSON)</button>
                 <label class="btn-outline botao-arquivo" for="arquivoImportar">⬆️ Importar backup</label>
                 <input type="file" id="arquivoImportar" accept="application/json,.json" class="sr-only">
             </div>
-            <p class="dica">Importar substitui os dados atuais deste navegador pelos do arquivo.</p>
+            <p class="dica">Importar adiciona à sua conta os alunos, atividades, adaptações e resultados do arquivo.</p>
         </section>
 
         <div class="dashboard-grid">
@@ -103,14 +103,18 @@
 
 </div>
 
-<script src="assets/js/db.js?v=20261123h"></script>
-<script src="assets/js/dados.js?v=20261123h"></script>
-<script src="assets/js/interativo.js?v=20261123h"></script>
-<script src="assets/js/engajamento.js?v=20261123h"></script>
-<script src="assets/js/jogos.js?v=20261123h"></script>
-<script src="assets/js/visual.js?v=20261123h"></script>
-<script src="assets/js/ui.js?v=20261123h"></script>
-<script src="assets/js/app.js?v=20261123h"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script>window.supabase || document.write('<script src="assets/js/vendor/supabase-2.119.2.min.js"><\/script>');</script>
+<script src="assets/js/db-local.js?v=20261123i"></script>
+<script src="assets/js/db.js?v=20261123i"></script>
+<script src="assets/js/dados.js?v=20261123i"></script>
+<script src="assets/js/interativo.js?v=20261123i"></script>
+<script src="assets/js/engajamento.js?v=20261123i"></script>
+<script src="assets/js/jogos.js?v=20261123i"></script>
+<script src="assets/js/visual.js?v=20261123i"></script>
+<script src="assets/js/ui.js?v=20261123i"></script>
+<script src="assets/js/migracao.js?v=20261123i"></script>
+<script src="assets/js/app.js?v=20261123i"></script>
 
 </body>
 </html>

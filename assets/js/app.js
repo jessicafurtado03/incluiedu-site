@@ -1,7 +1,7 @@
 /* =====================================================
    INCLUIEDU • APLICAÇÃO
    Contas, alunos, atividades, adaptações, resultados,
-   área do aluno e configurações, tudo no banco IndexedDB.
+   área do aluno e configurações, salvos na nuvem (contas sincronizadas).
    ===================================================== */
 
 const App = { usuario: null, materias: [] };
@@ -21,13 +21,7 @@ const dataBR = iso => iso ? new Date(iso).toLocaleDateString("pt-BR") : "";
    PRIMEIRA EXECUÇÃO: matérias e modelos de exemplo
    ===================================================== */
 
-async function semear() {
-    if (await DB.getMeta("semeado")) return;
-    const ids = {};
-    for (const m of DADOS_MATERIAS) ids[m.slug] = await DB.salvar("materias", m);
-    await DB.setMeta("modelosExemplo", DADOS_EXEMPLOS);
-    await DB.setMeta("semeado", true);
-}
+async function semear() { /* as matérias são fixas (dados.js); nada a semear no servidor */ }
 
 /* Copia os exemplos para a conta de um professor */
 async function criarExemplos(professorId) {
@@ -49,73 +43,59 @@ async function criarExemplos(professorId) {
     }
 }
 
-/* Migração do armazenamento antigo (LocalStorage) para o banco IndexedDB */
-async function migrarArmazenamentoAntigo() {
-    if (await DB.getMeta("migracaoLocalStorage")) return;
-    const ler = k => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } };
-    const antigos = ler("incluiedu_usuarios") || [];
-    const ignorar = ["professora@incluiedu.com", "aluno@incluiedu.com"];
-    const idsExemplo = new Set([101, 102, 103, 104, 105, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 401, 402, 403, 404, 405, 406]);
-    let professorMigrado = null;
-    for (const u of antigos) {
-        if (!u || !u.email || ignorar.includes(String(u.email).toLowerCase()) || u.tipo !== "professor") continue;
-        if (await DB.primeiro("usuarios", "email", u.email.toLowerCase())) continue;
-        const sal = Cripto.sal();
-        const id = await DB.salvar("usuarios", { nome: u.nome, email: u.email.toLowerCase(), tipo: "professor", sal, senhaHash: await Cripto.hashSenha(u.senha || "", sal) });
-        if (!professorMigrado) professorMigrado = id;
-    }
-    if (professorMigrado) {
-        const materias = await DB.listar("materias");
-        const mapaAluno = {}, mapaAtv = {};
-        for (const a of (ler("incluiedu_alunos") || []).filter(a => !idsExemplo.has(a.id))) {
-            mapaAluno[a.id] = await DB.salvar("alunos", { nome: a.nome, turma: a.turma, caracteristicas: a.caracteristicas, recursos: a.recursos, professorId: professorMigrado });
-        }
-        for (const t of (ler("incluiedu_atividades") || []).filter(t => !idsExemplo.has(t.id))) {
-            const mat = materias.find(m => m.nome.toLowerCase() === String(t.disciplina || "").toLowerCase());
-            mapaAtv[t.id] = await DB.salvar("atividades", { titulo: t.titulo, materiaId: mat ? mat.id : null, disciplinaLivre: mat ? "" : t.disciplina, turma: t.turma, objetivo: t.objetivo, conteudo: t.conteudo, professorId: professorMigrado });
-        }
-        for (const d of (ler("incluiedu_adaptacoes") || [])) {
-            if (mapaAluno[d.alunoId] && mapaAtv[d.atividadeId]) await DB.salvar("adaptacoes", { atividadeId: mapaAtv[d.atividadeId], alunoId: mapaAluno[d.alunoId], estrategias: d.estrategias || [], texto: d.texto || "", status: "aprovada", professorId: professorMigrado, respostas: {} });
-        }
-        for (const r of (ler("incluiedu_resultados") || [])) {
-            if (mapaAluno[r.alunoId] && mapaAtv[r.atividadeId]) await DB.salvar("resultados", { alunoId: mapaAluno[r.alunoId], atividadeId: mapaAtv[r.atividadeId], nivel: r.nivel, observacao: r.observacao, data: r.data, professorId: professorMigrado });
-        }
-    }
-    Object.keys(localStorage).filter(k => k.startsWith("incluiedu_") && k !== "incluiedu_acessibilidade" && k !== "incluiedu_sessao")
-        .forEach(k => localStorage.removeItem(k));
-    await DB.setMeta("migracaoLocalStorage", true);
-}
-
-
 /* =====================================================
    SESSÃO E CONTAS
    ===================================================== */
 
 async function usuarioAtual() {
-    const id = Number(localStorage.getItem("incluiedu_sessao"));
-    if (!id) return null;
-    const u = await DB.buscar("usuarios", id);
-    if (!u) localStorage.removeItem("incluiedu_sessao");
-    return u || null;
+    const { data } = await rodar(Nuvem.sb.auth.getSession());
+    const sessao = data && data.session;
+    if (!sessao) return null;
+    const { data: linha } = await rodar(Nuvem.sb.from("usuarios").select("*").eq("auth_id", sessao.user.id).maybeSingle());
+    return linha ? deLinha("usuarios", linha) : null;
 }
 
-function entrarSessao(usuario) { localStorage.setItem("incluiedu_sessao", String(usuario.id)); }
+/* Usuário de aluno sem e-mail (ex.: laura.5b) vira um e-mail interno, que nunca recebe mensagens */
+function emailDeLogin(v) {
+    v = String(v || "").trim().toLowerCase();
+    if (v.includes("@")) return v;
+    const usuario = v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ".").replace(/[^a-z0-9._-]/g, "");
+    if (!usuario) throw new Error("Digite um usuário ou e-mail válido.");
+    return usuario + "@" + DOMINIO_ALUNO;
+}
+const loginVisivel = u => (u && (u.login || u.email) || "").replace("@" + DOMINIO_ALUNO, "");
 
-function sair() {
-    localStorage.removeItem("incluiedu_sessao");
+function traduzirErroAuth(erro) {
+    const m = String(erro && erro.message || erro || "");
+    if (/already registered|already exists|User already/i.test(m)) return new Error("Este e-mail ou usuário já está cadastrado.");
+    if (/Password should be|at least 6|weak/i.test(m)) return new Error("A senha precisa ter pelo menos 6 caracteres.");
+    if (/invalid login|invalid credentials/i.test(m)) return new Error("E-mail/usuário ou senha incorretos.");
+    if (/invalid.*email|email.*invalid|unable to validate email/i.test(m)) return new Error("E-mail inválido. Confira e tente de novo.");
+    if (/rate limit|too many/i.test(m)) return new Error("Muitas tentativas seguidas. Espere um minuto e tente de novo.");
+    return erroAmigavel(erro);
+}
+
+async function sair() {
+    try { await Nuvem.sb.auth.signOut(); } catch (e) { /* sem conexão: limpa a sessão local mesmo assim */ }
+    try { Object.keys(localStorage).filter(k => k.startsWith("incluiedu-auth")).forEach(k => localStorage.removeItem(k)); } catch (e) { }
     location.href = "index.html";
 }
 
-async function criarUsuario({ nome, email, senha, tipo, alunoId = null, professorId = null }) {
-    email = String(email).trim().toLowerCase();
-    if (await DB.primeiro("usuarios", "email", email)) throw new Error("Este e-mail ou usuário já está cadastrado.");
+/* Cria a conta no servidor de autenticação; o perfil (tabela usuarios) é criado automaticamente */
+async function criarConta({ nome, email, senha, tipo }, cliente = Nuvem.sb) {
+    const login = String(email || "").trim().toLowerCase();
     if (String(senha).length < 6) throw new Error("A senha precisa ter pelo menos 6 caracteres.");
-    const sal = Cripto.sal();
-    return DB.salvar("usuarios", { nome: String(nome).trim(), email, tipo, alunoId, professorId, sal, senhaHash: await Cripto.hashSenha(senha, sal) });
+    const r = await cliente.auth.signUp({ email: emailDeLogin(login), password: senha, options: { data: { nome: String(nome).trim(), tipo, login } } }).catch(e => ({ error: e }));
+    if (r.error) throw traduzirErroAuth(r.error);
+    if (r.data && r.data.user && Array.isArray(r.data.user.identities) && !r.data.user.identities.length) throw new Error("Este e-mail ou usuário já está cadastrado.");
+    if (!r.data.session && cliente === Nuvem.sb) throw new Error("Conta criada. Confirme o e-mail recebido para entrar.");
+    return r.data.user;
 }
 
-async function verificarSenha(usuario, senha) {
-    return usuario && usuario.senhaHash === await Cripto.hashSenha(senha, usuario.sal);
+async function entrar(login, senha) {
+    const r = await Nuvem.sb.auth.signInWithPassword({ email: emailDeLogin(login), password: senha }).catch(e => ({ error: e }));
+    if (r.error) throw traduzirErroAuth(r.error);
+    return usuarioAtual();
 }
 
 function destinoPadrao(u) { return u.tipo === "professor" ? "dashboard-professor.html" : "dashboard-aluno.html"; }
@@ -154,7 +134,7 @@ async function excluirAluno(id) {
     await DB.excluirOnde("adaptacoes", "alunoId", id);
     await DB.excluirOnde("resultados", "alunoId", id);
     const acessos = (await DB.onde("usuarios", "professorId", App.usuario.id)).filter(u => u.alunoId === id);
-    for (const u of acessos) await DB.excluir("usuarios", u.id);
+    for (const u of acessos) await DB.rpc("professor_remover_acesso", { p_usuario: u.id });
     await DB.excluir("alunos", id);
 }
 
@@ -246,13 +226,14 @@ Paginas.login = async () => {
     if (App.usuario && !param("next")) { location.replace(destinoPadrao(App.usuario)); return; }
     $("#formLogin").addEventListener("submit", async e => {
         e.preventDefault();
-        const email = $("#email").value.trim().toLowerCase();
-        const u = await DB.primeiro("usuarios", "email", email);
-        if (!(await verificarSenha(u, $("#senha").value))) {
-            mensagem("mensagemLogin", "E-mail/usuário ou senha incorretos.", "erro");
-            return;
-        }
-        entrarSessao(u);
+        const botao = e.target.querySelector("button[type=submit], button");
+        let u;
+        try {
+            if (botao) botao.disabled = true;
+            mensagem("mensagemLogin", "Entrando…", "");
+            u = await entrar($("#email").value, $("#senha").value);
+            if (!u) throw new Error("Não encontramos o perfil desta conta. Tente de novo em instantes.");
+        } catch (erro) { mensagem("mensagemLogin", erro.message, "erro"); if (botao) botao.disabled = false; return; }
         const next = param("next");
         location.href = next && !/^https?:|^\/\//i.test(next) ? next : destinoPadrao(u);
     });
@@ -275,13 +256,12 @@ async function garantirCodigo(usuario) {
     return codigo;
 }
 
+/* Procura o professor pelo código da turma (IE-XXXXXX) ou e-mail, numa função segura do servidor (só devolve id e nome) */
 async function buscarProfessorPorVinculo(valor) {
     const v = String(valor || "").trim();
     if (!v) return null;
-    const porEmail = await DB.primeiro("usuarios", "email", v.toLowerCase());
-    if (porEmail && porEmail.tipo === "professor") return porEmail;
-    const profs = await DB.onde("usuarios", "tipo", "professor");
-    return profs.find(p => (p.codigoTurma || "").toUpperCase() === v.toUpperCase()) || null;
+    const r = await DB.rpc("buscar_professor", { p_valor: v });
+    return (r && r[0]) || null;
 }
 
 /* Atividades de exemplo para o aluno sem professor vinculado (escopo próprio: professorId negativo) */
@@ -297,17 +277,9 @@ async function criarExemplosAluno(alunoId, escopo) {
     }
 }
 
-async function vincularAluno(usuario, professor) {
-    const aluno = await DB.buscar("alunos", usuario.alunoId);
-    const escopoAntigo = usuario.professorId;
-    if (escopoAntigo !== null && escopoAntigo < 0) {
-        await DB.excluirOnde("adaptacoes", "professorId", escopoAntigo);
-        await DB.excluirOnde("atividades", "professorId", escopoAntigo);
-    }
-    await DB.salvar("alunos", Object.assign({}, aluno, { professorId: professor.id }));
-    const atualizado = Object.assign({}, usuario, { professorId: professor.id });
-    await DB.salvar("usuarios", atualizado);
-    return atualizado;
+async function vincularAluno(usuario, valor) {
+    await DB.rpc("vincular_professor", { p_valor: valor });
+    return usuarioAtual();
 }
 
 /* ---------- CADASTRO (ALUNO OU PROFESSOR) ---------- */
@@ -333,10 +305,13 @@ Paginas.cadastro = async () => {
         const tipo = document.querySelector('input[name="tipoConta"]:checked').value;
         try {
             if (tipo === "professor") {
-                const id = await criarUsuario({ nome: $("#nomeCadastro").value, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "professor" });
-                await garantirCodigo(await DB.buscar("usuarios", id));
-                if ($("#incluirExemplos").checked) await criarExemplos(id);
-                entrarSessao({ id });
+                if (!$("#emailCadastro").value.includes("@")) throw new Error("Para professor, use um e-mail válido.");
+                mensagem("mensagemCadastro", "Criando sua conta…", "");
+                await criarConta({ nome: $("#nomeCadastro").value, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "professor" });
+                App.usuario = await usuarioAtual();
+                if (!App.usuario) throw new Error("Conta criada, mas o perfil ainda não ficou pronto. Entre de novo em instantes.");
+                await garantirCodigo(App.usuario);
+                if ($("#incluirExemplos").checked) await criarExemplos(App.usuario.id);
                 mensagem("mensagemCadastro", "Conta criada! Abrindo sua área…", "sucesso");
                 setTimeout(() => { location.href = "dashboard-professor.html?bemvindo=1"; }, 700);
                 return;
@@ -345,13 +320,11 @@ Paginas.cadastro = async () => {
             const professor = vinculo ? await buscarProfessorPorVinculo(vinculo) : null;
             if (vinculo && !professor) throw new Error("Não encontramos um professor com esse código ou e-mail. Confira ou deixe o campo em branco.");
             const nome = $("#nomeCadastro").value.trim();
-            const uid = await criarUsuario({ nome, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "aluno" });
-            const escopo = professor ? professor.id : -uid;
-            const alunoId = await DB.salvar("alunos", { nome, turma: $("#turmaCadastro").value.trim() || "A definir", caracteristicas: "", recursos: "", professorId: escopo, autoCadastro: true });
-            const u = await DB.buscar("usuarios", uid);
-            await DB.salvar("usuarios", Object.assign({}, u, { alunoId, professorId: escopo }));
-            if (!professor) await criarExemplosAluno(alunoId, escopo);
-            entrarSessao({ id: uid });
+            mensagem("mensagemCadastro", "Criando sua conta…", "");
+            await criarConta({ nome, email: $("#emailCadastro").value, senha: $("#senhaCadastro").value, tipo: "aluno" });
+            const ini = await DB.rpc("aluno_iniciar", { p_nome: nome, p_turma: $("#turmaCadastro").value.trim(), p_vinculo: professor ? vinculo : "" });
+            App.usuario = await usuarioAtual();
+            if (!professor) await criarExemplosAluno(ini.alunoId, ini.professorId);
             mensagem("mensagemCadastro", "Conta criada! Abrindo sua área…", "sucesso");
             setTimeout(() => { location.href = "dashboard-aluno.html?bemvindo=1"; }, 700);
         } catch (erro) {
@@ -520,7 +493,7 @@ Paginas.perfilAluno = async () => {
         <section class="dashboard-card" id="cardAcesso">
             <h2>🔑 Acesso do aluno</h2>
             ${acesso ? `
-                <p>O aluno entra em <strong>Entrar</strong> com o usuário <strong>${esc(acesso.email)}</strong> e a senha definida por você.</p>
+                <p>O aluno entra em <strong>Entrar</strong> com o usuário <strong>${esc(loginVisivel(acesso))}</strong> e a senha definida por você.</p>
                 <form id="formNovaSenhaAluno" class="form-linha">
                     <label for="novaSenhaAluno" class="sr-only">Nova senha</label>
                     <input type="text" id="novaSenhaAluno" minlength="6" placeholder="Nova senha (mín. 6 caracteres)" required>
@@ -555,7 +528,11 @@ Paginas.perfilAluno = async () => {
     $("#formAcessoAluno")?.addEventListener("submit", async e => {
         e.preventDefault();
         try {
-            await criarUsuario({ nome: aluno.nome, email: $("#usuarioAluno").value, senha: $("#senhaAluno").value, tipo: "aluno", alunoId: aluno.id, professorId: App.usuario.id });
+            mensagem("mensagemAcesso", "Criando o acesso…", "");
+            const temp = Nuvem.temporario();
+            const conta = await criarConta({ nome: aluno.nome, email: $("#usuarioAluno").value, senha: $("#senhaAluno").value, tipo: "aluno" }, temp);
+            await DB.rpc("professor_vincular_acesso", { p_auth: conta.id, p_aluno: aluno.id });
+            temp.auth.signOut().catch(() => {});
             avisar("Acesso criado!"); setTimeout(() => location.reload(), 600);
         } catch (erro) { mensagem("mensagemAcesso", erro.message, "erro"); }
     });
@@ -563,14 +540,14 @@ Paginas.perfilAluno = async () => {
         e.preventDefault();
         const nova = $("#novaSenhaAluno").value;
         if (nova.length < 6) { mensagem("mensagemAcesso", "A senha precisa ter pelo menos 6 caracteres.", "erro"); return; }
-        const sal = Cripto.sal();
-        await DB.salvar("usuarios", Object.assign({}, acesso, { sal, senhaHash: await Cripto.hashSenha(nova, sal) }));
+        try { await DB.rpc("professor_trocar_senha", { p_usuario: acesso.id, p_senha: nova }); }
+        catch (erro) { mensagem("mensagemAcesso", erro.message, "erro"); return; }
         $("#novaSenhaAluno").value = "";
         mensagem("mensagemAcesso", "Senha alterada.", "sucesso");
     });
     $("#btnRemoverAcesso")?.addEventListener("click", async () => {
         if (await confirmar("Remover o acesso deste aluno? O histórico continua salvo.", { ok: "Remover", perigo: true })) {
-            await DB.excluir("usuarios", acesso.id); location.reload();
+            await DB.rpc("professor_remover_acesso", { p_usuario: acesso.id }); location.reload();
         }
     });
 };
@@ -820,23 +797,22 @@ Paginas.configuracoes = async () => {
     const codigo = await garantirCodigo(App.usuario);
     document.querySelectorAll("[data-codigo-turma]").forEach(el => { el.textContent = codigo; });
     $("#cfgEmail").value = App.usuario.email;
+    $("#cfgEmail").readOnly = true;
+    $("#cfgEmail").title = "O e-mail de acesso não pode ser alterado aqui.";
     $("#formPerfil").addEventListener("submit", async e => {
         e.preventDefault();
-        const email = $("#cfgEmail").value.trim().toLowerCase();
-        const outro = await DB.primeiro("usuarios", "email", email);
-        if (outro && outro.id !== App.usuario.id) { mensagem("msgPerfil", "Este e-mail já está em uso.", "erro"); return; }
-        App.usuario = Object.assign({}, App.usuario, { nome: $("#cfgNome").value.trim(), email });
-        await DB.salvar("usuarios", App.usuario);
+        App.usuario = Object.assign({}, App.usuario, { nome: $("#cfgNome").value.trim() });
+        try { await DB.salvar("usuarios", App.usuario); } catch (erro) { mensagem("msgPerfil", erro.message, "erro"); return; }
         preencherUsuario();
         mensagem("msgPerfil", "Dados atualizados.", "sucesso");
     });
     $("#formSenha").addEventListener("submit", async e => {
         e.preventDefault();
-        if (!(await verificarSenha(App.usuario, $("#senhaAtual").value))) { mensagem("msgSenha", "Senha atual incorreta.", "erro"); return; }
         if ($("#senhaNova").value.length < 6) { mensagem("msgSenha", "A nova senha precisa ter pelo menos 6 caracteres.", "erro"); return; }
-        const sal = Cripto.sal();
-        App.usuario = Object.assign({}, App.usuario, { sal, senhaHash: await Cripto.hashSenha($("#senhaNova").value, sal) });
-        await DB.salvar("usuarios", App.usuario);
+        const conferida = await Nuvem.sb.auth.signInWithPassword({ email: App.usuario.email, password: $("#senhaAtual").value }).catch(e => ({ error: e }));
+        if (conferida.error) { mensagem("msgSenha", /incorret|invalid/i.test(traduzirErroAuth(conferida.error).message) ? "Senha atual incorreta." : traduzirErroAuth(conferida.error).message, "erro"); return; }
+        const r = await Nuvem.sb.auth.updateUser({ password: $("#senhaNova").value }).catch(e => ({ error: e }));
+        if (r.error) { mensagem("msgSenha", traduzirErroAuth(r.error).message, "erro"); return; }
         e.target.reset();
         mensagem("msgSenha", "Senha alterada com sucesso.", "sucesso");
     });
@@ -850,10 +826,10 @@ Paginas.configuracoes = async () => {
         if (!arq) return;
         try {
             const dados = JSON.parse(await arq.text());
-            if (!(await confirmar("Importar este backup? Os dados atuais deste navegador serão substituídos pelos do arquivo.", { titulo: "Importar backup", ok: "Importar" }))) { e.target.value = ""; return; }
-            await DB.importar(dados);
-            avisar("Backup importado!");
-            setTimeout(() => location.href = "login.html", 900);
+            if (!(await confirmar("Importar este backup? Os alunos, atividades, adaptações e resultados do arquivo serão adicionados à sua conta.", { titulo: "Importar backup", ok: "Importar" }))) { e.target.value = ""; return; }
+            const n = await enviarParaNuvem(dados.tabelas || {}, { email: App.usuario.email });
+            avisar(`Backup importado: ${n.alunos} alunos, ${n.atividades} atividades, ${n.adaptacoes} adaptações.`);
+            setTimeout(() => location.reload(), 1200);
         } catch (erro) { avisar("Não foi possível importar: " + erro.message, "erro"); }
         e.target.value = "";
     });
@@ -863,13 +839,11 @@ Paginas.configuracoes = async () => {
     });
     $("#btnExcluirConta").addEventListener("click", async () => {
         if (!(await confirmar("Excluir sua conta e todos os seus alunos, atividades, adaptações, resultados e acessos de alunos? Essa ação não pode ser desfeita.", { titulo: "Excluir conta", ok: "Excluir tudo", perigo: true }))) return;
-        for (const t of ["resultados", "adaptacoes", "atividades", "alunos"]) await DB.excluirOnde(t, "professorId", App.usuario.id);
-        await DB.excluirOnde("usuarios", "professorId", App.usuario.id);
-        await DB.excluir("usuarios", App.usuario.id);
+        await DB.rpc("excluir_minha_conta");
         sair();
     });
     const [na, nt] = await Promise.all([DB.contar("alunos", "professorId", App.usuario.id), DB.contar("atividades", "professorId", App.usuario.id)]);
-    $("#infoBanco").textContent = `${na} alunos e ${nt} atividades salvos neste dispositivo.`;
+    $("#infoBanco").textContent = `${na} alunos e ${nt} atividades salvos na sua conta, na nuvem (aparecem em qualquer navegador em que você entrar).`;
 };
 
 
@@ -903,7 +877,7 @@ Paginas.dashboardAluno = async () => {
             const prof = await buscarProfessorPorVinculo($("#codigoVinculo").value);
             if (!prof) { mensagem("msgVinculo", "Código ou e-mail não encontrado.", "erro"); return; }
             if (!(await confirmar(`Vincular sua conta a ${prof.nome}? As atividades de exemplo serão trocadas pelas atividades do professor.`, { titulo: "Vincular professor", ok: "Vincular" }))) return;
-            App.usuario = await vincularAluno(App.usuario, prof);
+            App.usuario = await vincularAluno(App.usuario, $("#codigoVinculo").value);
             avisar("Pronto! Agora seu professor pode preparar atividades para você.");
             setTimeout(() => location.reload(), 900);
         });
@@ -1266,7 +1240,6 @@ Paginas.sugestoesProfessor = async () => {
     try {
         await DB.abrir();
         await semear();
-        await migrarArmazenamentoAntigo();
         App.materias = await DB.listar("materias");
         App.usuario = await usuarioAtual();
         preencherUsuario();
@@ -1283,9 +1256,12 @@ Paginas.sugestoesProfessor = async () => {
         });
         const rota = Paginas[document.body.dataset.pagina];
         if (rota) await rota();
+        if (App.usuario && typeof oferecerImportacao === "function") oferecerImportacao().catch(e => console.warn("Importação local:", e));
         if (typeof revelar === "function") revelar();
     } catch (erro) {
         console.error(erro);
-        avisar("Erro ao abrir o banco de dados: " + erro.message, "erro");
+        const msg = erroAmigavel(erro).message;
+        avisar(msg, "erro");
+        if (/conexão|internet/i.test(msg) && typeof mostrarSemConexao === "function") mostrarSemConexao();
     }
 })();

@@ -11,7 +11,7 @@
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
     <title>IncluiEdu | Sugestões dos alunos</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css?v=20261123h">
+    <link rel="stylesheet" href="style.css?v=20261123i">
 </head>
 <body data-pagina="sugestoesProfessor">
 
@@ -44,7 +44,7 @@
             <div>
                 <span>ESCUTA ATIVA</span>
                 <h1>Sugestões dos alunos</h1>
-                <p>O que alunos e visitantes pediram para aprender melhor. Os pedidos ficam salvos neste dispositivo.</p>
+                <p>O que alunos e visitantes pediram para aprender melhor. Os pedidos ficam salvos na nuvem.</p>
             </div>
             
         </div>
@@ -65,14 +65,18 @@
 
 </div>
 
-<script src="assets/js/db.js?v=20261123h"></script>
-<script src="assets/js/dados.js?v=20261123h"></script>
-<script src="assets/js/interativo.js?v=20261123h"></script>
-<script src="assets/js/engajamento.js?v=20261123h"></script>
-<script src="assets/js/jogos.js?v=20261123h"></script>
-<script src="assets/js/visual.js?v=20261123h"></script>
-<script src="assets/js/ui.js?v=20261123h"></script>
-<script src="assets/js/app.js?v=20261123h"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script>window.supabase || document.write('<script src="assets/js/vendor/supabase-2.119.2.min.js"><\/script>');</script>
+<script src="assets/js/db-local.js?v=20261123i"></script>
+<script src="assets/js/db.js?v=20261123i"></script>
+<script src="assets/js/dados.js?v=20261123i"></script>
+<script src="assets/js/interativo.js?v=20261123i"></script>
+<script src="assets/js/engajamento.js?v=20261123i"></script>
+<script src="assets/js/jogos.js?v=20261123i"></script>
+<script src="assets/js/visual.js?v=20261123i"></script>
+<script src="assets/js/ui.js?v=20261123i"></script>
+<script src="assets/js/migracao.js?v=20261123i"></script>
+<script src="assets/js/app.js?v=20261123i"></script>
 
 </body>
 </html>

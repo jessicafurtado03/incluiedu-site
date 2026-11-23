@@ -1,219 +1,155 @@
 /* =====================================================
-   INCLUIEDU • BANCO DE DADOS (IndexedDB)
-   Banco de dados real no navegador: tabelas, índices,
-   transações, exportação e importação de backup.
+   INCLUIEDU • BANCO DE DADOS NA NUVEM (Supabase)
+   Contas e dados sincronizados entre navegadores e aparelhos.
+   Mesma interface de antes (DB.listar, DB.buscar, DB.onde, DB.salvar…),
+   com segurança por linha (RLS) no servidor.
    ===================================================== */
 
-const DB_NOME = "incluiedu";
-const DB_VERSAO = 3;
+const NUVEM_URL = "https://ksbkrjiseovpcupttpqh.supabase.co";
+const NUVEM_CHAVE = "sb_publishable__e06h6zgVmF0noKeiE-syA_Se_jcfyl"; /* chave pública (publishable): pode ficar no site */
+const DOMINIO_ALUNO = "aluno.incluiedu.local"; /* usuários de aluno sem e-mail viram usuario@aluno.incluiedu.local */
+const DB_VERSAO = 4;
 
-const TABELAS = {
-    usuarios:   { indices: [["email", "email", true], ["tipo", "tipo"], ["professorId", "professorId"]] },
-    alunos:     { indices: [["professorId", "professorId"]] },
-    atividades: { indices: [["professorId", "professorId"], ["materiaId", "materiaId"]] },
-    adaptacoes: { indices: [["professorId", "professorId"], ["alunoId", "alunoId"], ["atividadeId", "atividadeId"]] },
-    resultados: { indices: [["professorId", "professorId"], ["alunoId", "alunoId"]] },
-    materias:   { indices: [["slug", "slug", true]] },
-    sugestoes:  { indices: [["pagina", "pagina"], ["usuarioId", "usuarioId"]] },
-    pontos:     { indices: [["usuarioId", "usuarioId"]] },
-    tempo:      { chave: "chave", indices: [["usuarioId", "usuarioId"]] },
-    meta:       { chave: "chave" }
+/* Colunas de busca de cada tabela (o resto do registro fica em "dados" jsonb) */
+const COLUNAS = {
+    usuarios: ["email", "tipo", "professorId", "alunoId", "authId"],
+    alunos: ["professorId"],
+    atividades: ["professorId", "materiaId"],
+    adaptacoes: ["professorId", "alunoId", "atividadeId"],
+    resultados: ["professorId", "alunoId", "atividadeId"],
+    pontos: ["usuarioId"],
+    tempo: ["usuarioId"],
+    sugestoes: ["pagina", "usuarioId"]
 };
+const TABELAS = Object.keys(COLUNAS);
+const CHAVE_TABELA = { tempo: "chave" };
+const paraColuna = k => k.replace(/[A-Z]/g, c => "_" + c.toLowerCase());
+
+const Nuvem = (() => {
+    let cliente = null;
+    function criar(opcoes) {
+        if (!window.supabase || !window.supabase.createClient) throw new Error("Não foi possível carregar a conexão com o servidor do IncluiEdu. Verifique a internet e recarregue a página.");
+        return window.supabase.createClient(NUVEM_URL, NUVEM_CHAVE, opcoes);
+    }
+    return {
+        get sb() { if (!cliente) cliente = criar({ auth: { persistSession: true, autoRefreshToken: true, storageKey: "incluiedu-auth", detectSessionInUrl: false } }); return cliente; },
+        /* cliente temporário (sem guardar sessão) para o professor criar a conta de um aluno sem sair da própria conta */
+        temporario() { return criar({ auth: { persistSession: false, autoRefreshToken: false, storageKey: "incluiedu-tmp-" + Date.now(), detectSessionInUrl: false } }); }
+    };
+})();
+
+let avisouSemConexao = false;
+function erroAmigavel(erro) {
+    const msg = String((erro && (erro.message || erro.error_description || erro.msg)) || erro || "");
+    if (/failed to fetch|networkerror|network request|load failed|fetch failed|ERR_INTERNET|timeout/i.test(msg) || (typeof navigator !== "undefined" && navigator.onLine === false)) {
+        if (!avisouSemConexao && typeof mostrarSemConexao === "function") { avisouSemConexao = true; mostrarSemConexao(); }
+        return new Error("Sem conexão com o servidor do IncluiEdu. Verifique a internet e tente de novo.");
+    }
+    if (/JWT|session|refresh token/i.test(msg)) return new Error("Sua sessão expirou. Entre de novo, por favor.");
+    if (/row-level security|permission denied|violates/i.test(msg)) return new Error("Você não tem permissão para esta ação.");
+    return new Error(msg || "Algo deu errado. Tente de novo.");
+}
+async function rodar(consulta) {
+    let r;
+    try { r = await consulta; } catch (e) { throw erroAmigavel(e); }
+    if (r.error) throw erroAmigavel(r.error);
+    return r;
+}
+
+const MATERIAS_FIXAS = () => (typeof DADOS_MATERIAS !== "undefined" ? DADOS_MATERIAS : []).map((m, i) => Object.assign({}, m, { id: i + 1 }));
+
+function paraLinha(tabela, reg) {
+    const cols = COLUNAS[tabela] || [], linha = {}, dados = {};
+    Object.entries(reg).forEach(([k, v]) => {
+        if (v === undefined) return;
+        if (k === "id" || k === CHAVE_TABELA[tabela]) { if (v !== null) linha[k] = v; }
+        else if (cols.includes(k)) linha[paraColuna(k)] = v;
+        else dados[k] = v;
+    });
+    linha.dados = dados;
+    return linha;
+}
+function deLinha(tabela, linha) {
+    if (!linha) return null;
+    const reg = Object.assign({}, linha.dados || {});
+    if (linha.id !== undefined) reg.id = linha.id;
+    if (CHAVE_TABELA[tabela]) reg[CHAVE_TABELA[tabela]] = linha[CHAVE_TABELA[tabela]];
+    (COLUNAS[tabela] || []).forEach(k => { const c = paraColuna(k); if (c in linha) reg[k] = linha[c]; });
+    if (!reg.criadoEm && linha.criado_em) reg.criadoEm = linha.criado_em;
+    return reg;
+}
+const chaveDe = t => CHAVE_TABELA[t] || "id";
 
 const DB = {
-    _conexao: null,
+    abrir() { Nuvem.sb; return Promise.resolve(true); },
 
-    abrir() {
-        if (this._conexao) return Promise.resolve(this._conexao);
-        return new Promise((resolve, reject) => {
-            if (!("indexedDB" in window)) {
-                reject(new Error("Este navegador não tem suporte a IndexedDB."));
-                return;
-            }
-            const req = indexedDB.open(DB_NOME, DB_VERSAO);
-            req.onupgradeneeded = () => {
-                const db = req.result;
-                Object.entries(TABELAS).forEach(([nome, cfg]) => {
-                    if (db.objectStoreNames.contains(nome)) return;
-                    const store = cfg.chave
-                        ? db.createObjectStore(nome, { keyPath: cfg.chave })
-                        : db.createObjectStore(nome, { keyPath: "id", autoIncrement: true });
-                    (cfg.indices || []).forEach(([idx, campo, unico]) =>
-                        store.createIndex(idx, campo, { unique: !!unico }));
-                });
-            };
-            req.onsuccess = () => {
-                const con = req.result;
-                /* Outra aba abriu uma versão nova do banco: fecha e recarrega em vez de travar */
-                con.onversionchange = () => { con.close(); this._conexao = null; location.reload(); };
-                this._conexao = con;
-                resolve(con);
-            };
-            req.onerror = () => reject(req.error);
-            /* Atualização bloqueada por uma aba antiga: avisa e continua esperando (a outra aba recarrega sozinha) */
-            req.onblocked = () => {
-                if (typeof avisar === "function") avisar("Atualizando o banco de dados… se demorar, feche as outras abas do IncluiEdu.", "info");
-                else console.warn("IncluiEdu: atualização do banco aguardando outras abas.");
-            };
-        });
+    async listar(tabela) {
+        if (tabela === "materias") return MATERIAS_FIXAS();
+        const { data } = await rodar(Nuvem.sb.from(tabela).select("*").order(chaveDe(tabela)));
+        return data.map(l => deLinha(tabela, l));
     },
 
-    async _tx(tabelas, modo, fn) {
-        const db = await this.abrir();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(tabelas, modo);
-            let retorno;
-            Promise.resolve(fn(tx)).then(r => { retorno = r; });
-            tx.oncomplete = () => resolve(retorno);
-            tx.onerror = () => reject(tx.error);
-            tx.onabort = () => reject(tx.error || new Error("Operação cancelada."));
-        });
+    async buscar(tabela, id) {
+        if (tabela === "materias") return MATERIAS_FIXAS().find(m => m.id === id) || null;
+        if (id === null || id === undefined || id === "") return null;
+        const { data } = await rodar(Nuvem.sb.from(tabela).select("*").eq(chaveDe(tabela), id).maybeSingle());
+        return deLinha(tabela, data);
     },
 
-    _req(r) {
-        return new Promise((resolve, reject) => {
-            r.onsuccess = () => resolve(r.result);
-            r.onerror = () => reject(r.error);
-        });
+    async onde(tabela, indice, valor) {
+        if (tabela === "materias") return MATERIAS_FIXAS().filter(m => m[indice] === valor);
+        if (valor === null || valor === undefined) return [];
+        const { data } = await rodar(Nuvem.sb.from(tabela).select("*").eq(paraColuna(indice), valor).order(chaveDe(tabela)));
+        return data.map(l => deLinha(tabela, l));
     },
 
-    listar(tabela) {
-        return this._tx([tabela], "readonly", tx => this._req(tx.objectStore(tabela).getAll()));
+    async primeiro(tabela, indice, valor) { return (await this.onde(tabela, indice, valor))[0] || null; },
+
+    async contar(tabela, indice, valor) {
+        const { count } = await rodar(Nuvem.sb.from(tabela).select("*", { count: "exact", head: true }).eq(paraColuna(indice), valor));
+        return count || 0;
     },
 
-    buscar(tabela, id) {
-        return this._tx([tabela], "readonly", tx => this._req(tx.objectStore(tabela).get(id)));
-    },
-
-    onde(tabela, indice, valor) {
-        return this._tx([tabela], "readonly", tx =>
-            this._req(tx.objectStore(tabela).index(indice).getAll(valor)));
-    },
-
-    primeiro(tabela, indice, valor) {
-        return this._tx([tabela], "readonly", tx =>
-            this._req(tx.objectStore(tabela).index(indice).get(valor)));
-    },
-
-    /* Cria ou atualiza. Retorna o id. */
-    salvar(tabela, registro) {
+    async salvar(tabela, registro) {
         const agora = new Date().toISOString();
-        const dados = Object.assign({}, registro, { atualizadoEm: agora });
-        if (!dados.criadoEm) dados.criadoEm = agora;
-        if (dados.id === undefined || dados.id === null) delete dados.id;
-        return this._tx([tabela], "readwrite", tx => this._req(tx.objectStore(tabela).put(dados)));
+        const reg = Object.assign({}, registro, { atualizadoEm: agora });
+        if (!reg.criadoEm) reg.criadoEm = agora;
+        const linha = paraLinha(tabela, reg);
+        const sb = Nuvem.sb;
+        if (tabela === "usuarios") { /* só os dados do perfil (nome, código da turma…) podem ser alterados */
+            const d = Object.assign({}, linha.dados); delete d.criadoEm;
+            await rodar(sb.from("usuarios").update({ dados: d }).eq("id", reg.id));
+            return reg.id;
+        }
+        if (CHAVE_TABELA[tabela]) { await rodar(sb.from(tabela).upsert(linha, { onConflict: CHAVE_TABELA[tabela] })); return reg[CHAVE_TABELA[tabela]]; }
+        if (tabela === "sugestoes" && !reg.id) { await rodar(sb.from(tabela).insert(linha)); return null; } /* visitante pode enviar, mas não ler */
+        if (reg.id !== undefined && reg.id !== null) {
+            const id = linha.id; delete linha.id;
+            const { data } = await rodar(sb.from(tabela).update(linha).eq("id", id).select("id"));
+            if (!data.length) throw new Error("Registro não encontrado ou sem permissão para alterar.");
+            return id;
+        }
+        const { data } = await rodar(sb.from(tabela).insert(linha).select("id").single());
+        return data.id;
     },
 
-    excluir(tabela, id) {
-        return this._tx([tabela], "readwrite", tx => this._req(tx.objectStore(tabela).delete(id)));
-    },
+    async excluir(tabela, id) { await rodar(Nuvem.sb.from(tabela).delete().eq(chaveDe(tabela), id)); },
 
-    async excluirOnde(tabela, indice, valor) {
-        const itens = await this.onde(tabela, indice, valor);
-        await this._tx([tabela], "readwrite", tx => {
-            const store = tx.objectStore(tabela);
-            itens.forEach(i => store.delete(i.id));
-        });
-        return itens.length;
-    },
+    async excluirOnde(tabela, indice, valor) { await rodar(Nuvem.sb.from(tabela).delete().eq(paraColuna(indice), valor)); },
 
-    contar(tabela, indice, valor) {
-        return this._tx([tabela], "readonly", tx => {
-            const store = tx.objectStore(tabela);
-            return this._req(indice ? store.index(indice).count(valor) : store.count());
-        });
-    },
+    async rpc(nome, args) { const { data } = await rodar(Nuvem.sb.rpc(nome, args || {})); return data; },
 
+    /* Pequenas preferências deste aparelho (não são dados da escola) */
     async getMeta(chave, padrao = null) {
-        const r = await this.buscar("meta", chave);
-        return r ? r.valor : padrao;
+        try { const v = localStorage.getItem("incluiedu_meta_" + chave); return v === null ? padrao : JSON.parse(v); } catch (e) { return padrao; }
     },
+    async setMeta(chave, valor) { localStorage.setItem("incluiedu_meta_" + chave, JSON.stringify(valor)); },
 
-    setMeta(chave, valor) {
-        return this._tx(["meta"], "readwrite", tx => this._req(tx.objectStore("meta").put({ chave, valor })));
-    },
-
-    /* Backup completo em JSON */
+    /* Backup: tudo o que a sua conta pode ver */
     async exportar() {
-        const dados = { app: "IncluiEdu", versao: DB_VERSAO, exportadoEm: new Date().toISOString(), tabelas: {} };
-        for (const t of Object.keys(TABELAS)) dados.tabelas[t] = await this.listar(t);
+        const dados = { app: "IncluiEdu", versao: DB_VERSAO, origem: "nuvem", exportadoEm: new Date().toISOString(), tabelas: {} };
+        for (const t of TABELAS) dados.tabelas[t] = await this.listar(t);
+        dados.tabelas.materias = MATERIAS_FIXAS();
         return dados;
-    },
-
-    async importar(dados) {
-        if (!dados || dados.app !== "IncluiEdu" || !dados.tabelas) {
-            throw new Error("Arquivo de backup inválido.");
-        }
-        const nomes = Object.keys(TABELAS);
-        await this._tx(nomes, "readwrite", tx => {
-            nomes.forEach(t => {
-                const store = tx.objectStore(t);
-                store.clear();
-                (dados.tabelas[t] || []).forEach(r => store.put(r));
-            });
-        });
     }
 };
-
-
-/* =====================================================
-   SENHAS: SHA-256 + sal (SubtleCrypto, com alternativa)
-   ===================================================== */
-
-const Cripto = {
-    sal() {
-        const b = new Uint8Array(16);
-        crypto.getRandomValues(b);
-        return [...b].map(x => x.toString(16).padStart(2, "0")).join("");
-    },
-
-    async sha256(texto) {
-        const bytes = new TextEncoder().encode(texto);
-        if (window.crypto && crypto.subtle && window.isSecureContext !== false) {
-            try {
-                const h = await crypto.subtle.digest("SHA-256", bytes);
-                return [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, "0")).join("");
-            } catch (e) { /* usa a implementação abaixo */ }
-        }
-        return sha256Js(bytes);
-    },
-
-    async hashSenha(senha, sal) {
-        return this.sha256(sal + ":" + senha);
-    }
-};
-
-/* SHA-256 em JavaScript puro (usado só se SubtleCrypto não estiver disponível) */
-function sha256Js(bytes) {
-    const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
-    let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
-    const l = bytes.length, bitLen = l * 8;
-    const total = ((l + 9 + 63) >> 6) << 6;
-    const m = new Uint8Array(total);
-    m.set(bytes); m[l] = 0x80;
-    const dv = new DataView(m.buffer);
-    dv.setUint32(total - 4, bitLen >>> 0);
-    dv.setUint32(total - 8, Math.floor(bitLen / 4294967296));
-    const w = new Uint32Array(64);
-    const r = (x, n) => (x >>> n) | (x << (32 - n));
-    for (let i = 0; i < total; i += 64) {
-        for (let t = 0; t < 16; t++) w[t] = dv.getUint32(i + t * 4);
-        for (let t = 16; t < 64; t++) {
-            const s0 = r(w[t-15],7) ^ r(w[t-15],18) ^ (w[t-15] >>> 3);
-            const s1 = r(w[t-2],17) ^ r(w[t-2],19) ^ (w[t-2] >>> 10);
-            w[t] = (w[t-16] + s0 + w[t-7] + s1) >>> 0;
-        }
-        let [a,b,c,d,e,f,g,h] = H;
-        for (let t = 0; t < 64; t++) {
-            const S1 = r(e,6) ^ r(e,11) ^ r(e,25);
-            const ch = (e & f) ^ (~e & g);
-            const t1 = (h + S1 + ch + K[t] + w[t]) >>> 0;
-            const S0 = r(a,2) ^ r(a,13) ^ r(a,22);
-            const mj = (a & b) ^ (a & c) ^ (b & c);
-            const t2 = (S0 + mj) >>> 0;
-            h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
-        }
-        H = H.map((v, k) => (v + [a,b,c,d,e,f,g,h][k]) >>> 0);
-    }
-    return H.map(v => v.toString(16).padStart(8, "0")).join("");
-}

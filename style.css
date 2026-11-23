@@ -1982,3 +1982,7 @@ nav.indice a:hover, nav.indice a:focus-visible { background: #eef0ff; }
   .artigo [id], .artigo section, #quiz, #videos, #glossario { scroll-margin-top: 84px; }
 }
 :where(img[height]) { height: auto; }
+.banner-importar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#eef0ff;border:2px solid #5b54e8;border-radius:16px;padding:14px 18px;margin:0 0 18px}
+.banner-importar>span{font-size:2rem}.banner-importar>div:not(.botoes-linha){flex:1 1 280px}.banner-importar p{margin:4px 0 0}
+.aviso-conexao{position:sticky;top:0;z-index:2000;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#fff4e5;border-bottom:2px solid #e0a21b;padding:10px 5%}
+.aviso-conexao p{margin:0;flex:1 1 260px}.aviso-conexao>span{font-size:1.5rem}

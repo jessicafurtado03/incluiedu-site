@@ -2,7 +2,7 @@
    INCLUIEDU • PONTOS E ENGAJAMENTO
    Pontos por tarefa (bônus de primeira tentativa), mini-jogos,
    dias estudados, sequência de dias e tempo ATIVO de estudo
-   (aba visível + interação recente). Tudo no IndexedDB.
+   (aba visível + interação recente). Tudo salvo na conta do aluno, na nuvem.
    ===================================================== */
 
 const Engaja = (() => {

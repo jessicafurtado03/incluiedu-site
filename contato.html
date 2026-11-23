@@ -11,7 +11,7 @@
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
     <title>IncluiEdu | Contato</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css?v=20261123h">
+    <link rel="stylesheet" href="style.css?v=20261123i">
 </head>
 <body data-vlibras data-pagina="contato">
 
@@ -101,7 +101,7 @@
     <div class="faq">
         <details open><summary>O IncluiEdu substitui o professor ou o AEE?</summary><p>Não. Ele organiza informações e sugere estratégias. Quem decide é sempre o professor, em parceria com o AEE e a família.</p></details>
         <details><summary>Preciso instalar alguma coisa?</summary><p>Não. O IncluiEdu funciona direto no navegador, no computador, tablet ou celular.</p></details>
-        <details><summary>Onde ficam os dados dos alunos?</summary><p>Os dados ficam salvos no banco de dados IndexedDB do próprio navegador, neste dispositivo: nada é enviado para servidores. As senhas são guardadas com SHA-256 e sal. Em Configurações, o professor pode exportar um backup em arquivo JSON e importá-lo em outro computador ou navegador.</p></details>
+        <details><summary>Onde ficam os dados dos alunos?</summary><p>Os dados ficam salvos com segurança na nuvem (banco de dados Supabase, servidor no Brasil, em São Paulo). Cada conta só enxerga o que é dela: o professor vê os próprios alunos e atividades, e o aluno vê só as atividades feitas para ele. As senhas são protegidas pelo sistema de login, e você pode entrar de qualquer navegador ou aparelho. Em Configurações, o professor também pode exportar um backup em arquivo JSON.</p></details>
         <details><summary>Como começo a usar?</summary><p>Clique em “Criar conta”, cadastre-se como professor e pronto: sua conta já vem com alunos e atividades de exemplo (com a etiqueta “exemplo”), que você pode editar ou excluir. Depois, no perfil de cada aluno, crie o usuário e a senha que ele vai usar para entrar.</p></details>
         <details><summary>O site é acessível?</summary><p>Sim: tem botão de acessibilidade (texto maior, alto contraste, leitura facilitada, leitura em voz alta), navegação por teclado e, com internet, o tradutor VLibras.</p></details>
         <details><summary>Quanto custa?</summary><p>Para professores é gratuito. Para escolas e redes de ensino, os planos são sob consulta.</p></details>
@@ -150,14 +150,18 @@
     </div>
 </footer>
 
-<script src="assets/js/db.js?v=20261123h"></script>
-<script src="assets/js/dados.js?v=20261123h"></script>
-<script src="assets/js/interativo.js?v=20261123h"></script>
-<script src="assets/js/engajamento.js?v=20261123h"></script>
-<script src="assets/js/jogos.js?v=20261123h"></script>
-<script src="assets/js/visual.js?v=20261123h"></script>
-<script src="assets/js/ui.js?v=20261123h"></script>
-<script src="assets/js/app.js?v=20261123h"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script>window.supabase || document.write('<script src="assets/js/vendor/supabase-2.119.2.min.js"><\/script>');</script>
+<script src="assets/js/db-local.js?v=20261123i"></script>
+<script src="assets/js/db.js?v=20261123i"></script>
+<script src="assets/js/dados.js?v=20261123i"></script>
+<script src="assets/js/interativo.js?v=20261123i"></script>
+<script src="assets/js/engajamento.js?v=20261123i"></script>
+<script src="assets/js/jogos.js?v=20261123i"></script>
+<script src="assets/js/visual.js?v=20261123i"></script>
+<script src="assets/js/ui.js?v=20261123i"></script>
+<script src="assets/js/migracao.js?v=20261123i"></script>
+<script src="assets/js/app.js?v=20261123i"></script>
 
 </body>
 </html>
