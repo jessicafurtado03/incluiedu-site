@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Alunos">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Alunos</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+    <a class="btn" href="dashboard-professor.html">Dashboard</a>
+</header>
+
+<div class="dashboard">
+
+    <aside class="sidebar" aria-label="Menu do professor">
+        <a href="dashboard-professor.html">🏠 Dashboard</a>
+        <a class="ativo" aria-current="page" href="alunos.html">👨‍🎓 Alunos</a>
+        <a href="atividades.html">📝 Atividades</a>
+        <a href="adaptar-atividade.html">🧩 Adaptações</a>
+        <a href="resultados.html">📊 Resultados</a>
+        <a href="materias.html">📚 Matérias</a>
+        <a href="conteudos.html">💡 Conteúdos</a>
+    </aside>
+
+    <main class="dashboard-content" id="conteudo">
+
+        <div class="demo-barra">
+            <p>🧪 <strong>Modo demonstração:</strong> os dados ficam salvos só neste navegador.</p>
+            <div class="botoes-linha">
+                <button class="btn-mini" type="button" onclick="restaurarDemonstracao()">↻ Carregar dados de exemplo</button>
+                <button class="btn-mini" type="button" onclick="limparDados()">🗑 Limpar dados</button>
+            </div>
+        </div>
+
+        <div class="dashboard-title">
+            <div>
+                <span>MINHA TURMA</span>
+                <h1>Alunos</h1>
+                <p>Gerencie os perfis pedagógicos dos seus alunos.</p>
+            </div>
+        </div>
+
+        <section class="dashboard-card">
+            <div class="card-header"><h2>Cadastrar aluno</h2></div>
+            <form id="formAluno" class="form-grid">
+                <div>
+                    <label for="nomeAluno">Nome do aluno</label>
+                    <input type="text" id="nomeAluno" placeholder="Nome completo" required>
+                </div>
+                <div>
+                    <label for="turmaAluno">Turma</label>
+                    <input type="text" id="turmaAluno" placeholder="Ex.: 5º Ano A" required>
+                </div>
+                <div class="form-full">
+                    <label for="caracteristicasAluno">Características de aprendizagem</label>
+                    <textarea id="caracteristicasAluno" placeholder="Ex.: TDAH, perde o foco em textos longos; dislexia; baixa visão; surdez (Libras)..." rows="4"></textarea>
+                </div>
+                <div class="form-full">
+                    <label for="recursosAluno">Recursos que facilitam a aprendizagem</label>
+                    <textarea id="recursosAluno" placeholder="Ex.: imagens, instruções curtas, áudio, fonte ampliada..." rows="4"></textarea>
+                </div>
+                <div class="form-full">
+                    <button class="btn" type="submit">Cadastrar aluno</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="dashboard-card">
+            <div class="card-header"><h2>Meus alunos</h2></div>
+            <div id="listaAlunos"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

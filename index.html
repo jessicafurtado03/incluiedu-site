@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica: adapte atividades às necessidades de cada aluno.">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Inclusão Pedagógica">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica: adapte atividades às necessidades de cada aluno.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Inclusão Pedagógica</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-vlibras>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header>
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <nav aria-label="Menu principal">
+        <a href="index.html">Início</a>
+        <a href="professor.html">Professor</a>
+        <a href="aluno.html">Aluno</a>
+        <a href="materias.html">Matérias</a>
+        <a href="conteudos.html">Conteúdos</a>
+        <a href="dicas-estudo.html">Dicas de estudo</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="contato.html">Contato</a>
+    </nav>
+
+    <div class="acoes">
+        <a class="btn-link" href="login.html">Entrar</a>
+        <a class="btn" href="cadastro.html">Criar conta</a>
+    </div>
+
+    <button class="botao-menu" id="botaoMenu" type="button" aria-expanded="false" aria-label="Abrir menu">☰</button>
+</header>
+
+<main id="conteudo">
+
+<section id="inicio" class="hero">
+
+    <div class="hero-texto">
+        <span>ASSISTENTE DE INCLUSÃO PEDAGÓGICA</span>
+
+        <h1>A atividade se adapta ao aluno, <strong>e não o aluno à atividade.</strong></h1>
+
+        <p>
+            O IncluiEdu ajuda professores a adaptar atividades de acordo com as necessidades
+            e características de aprendizagem de cada aluno: em minutos, com sugestões
+            explicadas e sempre com a palavra final do professor.
+        </p>
+
+        <div class="hero-botoes">
+            <a class="btn" href="cadastro.html">Começar agora</a>
+            <button class="btn-outline" type="button" onclick="entrarDemo('professor')">▶ Ver demonstração</button>
+        </div>
+
+        <div class="hero-numeros">
+            <div><strong>5 passos</strong><span>do cadastro ao acompanhamento</span></div>
+            <div><strong>20+</strong><span>estratégias de adaptação</span></div>
+            <div><strong>100%</strong><span>gratuito para professores</span></div>
+        </div>
+    </div>
+
+    <div class="hero-foto">
+        <img src="assets/img/professora-ajudando-aluno.jpg" alt="Professora orienta um aluno durante atividade em sala de aula" loading="eager" decoding="async">
+        <div class="selo-flutuante s1"><span>🧩</span><div>Adaptação sugerida<small>instruções curtas + apoio visual</small></div></div>
+        <div class="selo-flutuante s2"><span>📈</span><div>Concluiu sozinho<small>Davi • Frações</small></div></div>
+    </div>
+
+</section>
+
+
+<section class="faixa-dados" aria-label="Dados da educação inclusiva no Brasil">
+    <div><strong>2,5 mi</strong><p>matrículas na Educação Especial em 2025</p></div>
+    <div><strong>96%</strong><p>dos estudantes de 4 a 17 anos da Educação Especial estão em classes comuns</p></div>
+    <div><strong>49,7%</strong><p>têm acesso ao Atendimento Educacional Especializado (AEE)</p></div>
+    <p class="fonte">Fonte: INEP – Censo Escolar da Educação Básica 2025, conforme levantamento da equipe do projeto.</p>
+</section>
+
+
+<section id="como-funciona" class="section">
+
+    <div class="section-header">
+        <span>COMO FUNCIONA</span>
+        <h2>Inclusão de forma simples e personalizada</h2>
+        <p>O IncluiEdu acompanha todo o processo, desde a criação da atividade até o registro dos resultados.</p>
+    </div>
+
+    <div class="etapas">
+        <article>
+            <span>01</span>
+            <div aria-hidden="true">👩‍🏫</div>
+            <h3>Professor cria a atividade</h3>
+            <p>Cadastre ou cole a atividade que será aplicada para a turma.</p>
+        </article>
+        <article>
+            <span>02</span>
+            <div aria-hidden="true">🧠</div>
+            <h3>Perfil do aluno</h3>
+            <p>O sistema considera as características e os recursos facilitadores registrados.</p>
+        </article>
+        <article>
+            <span>03</span>
+            <div aria-hidden="true">✨</div>
+            <h3>Adaptação</h3>
+            <p>São sugeridas estratégias e uma versão em etapas, que o professor revisa e aprova.</p>
+        </article>
+        <article>
+            <span>04</span>
+            <div aria-hidden="true">📊</div>
+            <h3>Acompanhamento</h3>
+            <p>O professor registra o resultado e acompanha a evolução na memória pedagógica.</p>
+        </article>
+    </div>
+
+</section>
+
+
+<section class="section cinza">
+    <div class="bloco-split">
+        <div>
+            <span class="rotulo">Exemplo real de uso</span>
+            <h2>Da atividade original à atividade acessível</h2>
+            <p>
+                A professora Ana tem 32 alunos no 5º ano. Davi tem TDAH e perde o foco em enunciados longos.
+                Com o IncluiEdu, ela seleciona a atividade “Frações com pizza” e o perfil do Davi.
+            </p>
+            <ul class="lista-check">
+                <li>O sistema sugere <strong>instruções curtas, etapas e pausas</strong>.</li>
+                <li>Gera uma versão com 5 etapas numeradas, pronta para editar.</li>
+                <li>Davi faz a atividade <strong>uma etapa por vez</strong>, com opção de ouvir.</li>
+                <li>A professora registra: “concluiu sozinho”. A estratégia fica salva.</li>
+            </ul>
+            <button class="btn" type="button" onclick="entrarDemo('professor')">Experimentar com dados de exemplo</button>
+        </div>
+        <figure>
+            <img src="assets/img/colegas-aprendendo-juntos.jpg" alt="Dois alunos, um deles com deficiência, montando um jogo pedagógico juntos" loading="lazy" decoding="async">
+            <figcaption>Quando a atividade é acessível, todos participam juntos.</figcaption>
+        </figure>
+    </div>
+</section>
+
+
+<section id="recursos" class="section">
+
+    <div class="section-header">
+        <span>RECURSOS</span>
+        <h2>Tudo em um só lugar</h2>
+        <p>Ferramentas desenvolvidas para apoiar o professor no processo de inclusão.</p>
+    </div>
+
+    <div class="recursos-grid">
+        <article>
+            <div aria-hidden="true">👨‍🎓</div>
+            <h3>Perfil do aluno</h3>
+            <p>Registre necessidades, preferências e facilitadores de cada estudante.</p>
+            <a class="saiba" href="alunos.html">Ver alunos →</a>
+        </article>
+        <article>
+            <div aria-hidden="true">📝</div>
+            <h3>Atividades</h3>
+            <p>Crie e organize as atividades por disciplina e turma.</p>
+            <a class="saiba" href="atividades.html">Ver atividades →</a>
+        </article>
+        <article>
+            <div aria-hidden="true">🧩</div>
+            <h3>Adaptação</h3>
+            <p>Sugestões personalizadas e explicadas, geradas a partir do perfil.</p>
+            <a class="saiba" href="adaptacao.html">Como adaptamos →</a>
+        </article>
+        <article>
+            <div aria-hidden="true">📈</div>
+            <h3>Acompanhamento</h3>
+            <p>Registre resultados e veja a evolução de cada aluno.</p>
+            <a class="saiba" href="resultados.html">Ver resultados →</a>
+        </article>
+        <article>
+            <div aria-hidden="true">🧠</div>
+            <h3>Memória pedagógica</h3>
+            <p>Histórico das estratégias que funcionaram, aluno por aluno.</p>
+            <a class="saiba" href="aluno-perfil.html?id=101">Ver um perfil →</a>
+        </article>
+        <article>
+            <div aria-hidden="true">♿</div>
+            <h3>Acessibilidade</h3>
+            <p>Alto contraste, texto ampliado, leitura em voz alta e Libras (VLibras).</p>
+            <a class="saiba" href="conteudos.html#acessibilidade">Saiba mais →</a>
+        </article>
+    </div>
+
+</section>
+
+
+<section class="section cinza">
+    <div class="section-header">
+        <span>APRENDA COM A GENTE</span>
+        <h2>Conteúdos sobre ensino e aprendizagem</h2>
+        <p>Textos curtos e práticos para professores, famílias e estudantes.</p>
+    </div>
+
+    <div class="cards-foto">
+        <a class="card-foto" href="conteudos.html#o-que-e">
+            <img src="assets/img/roda-de-conversa.jpg" alt="Turma de crianças sentada em roda durante uma atividade inclusiva" loading="lazy" decoding="async">
+            <div><span class="rotulo">Educação inclusiva</span><h3>Integrar não é incluir</h3><p>Entenda a diferença e por que ela importa na sala de aula.</p></div>
+        </a>
+        <a class="card-foto" href="conteudos.html#dua">
+            <img src="assets/img/leitura-compartilhada.jpg" alt="Crianças e adultos leem um livro juntos em uma sala de aula" loading="lazy" decoding="async">
+            <div><span class="rotulo">Planejamento</span><h3>Desenho Universal para a Aprendizagem</h3><p>Três princípios para planejar aulas que funcionam para todos.</p></div>
+        </a>
+        <a class="card-foto" href="dicas-estudo.html">
+            <img src="assets/img/sala-colaborativa.jpg" alt="Crianças trabalhando em grupos em mesas compartilhadas na sala de aula" loading="lazy" decoding="async">
+            <div><span class="rotulo">Para estudantes</span><h3>Como estudar melhor</h3><p>Técnicas com base científica e um cronômetro de estudos.</p></div>
+        </a>
+    </div>
+</section>
+
+
+<section id="sobre" class="impacto">
+    <span>INCLUIEDU</span>
+    <h2>Inclusão não é fazer todos aprenderem da mesma forma.</h2>
+    <p>É criar possibilidades para que cada aluno consiga aprender da melhor maneira possível.</p>
+</section>
+
+
+<section class="section">
+    <div class="section-header">
+        <span>O QUE DIZEM</span>
+        <h2>Feito para a rotina real da escola</h2>
+    </div>
+    <div class="depoimentos">
+        <blockquote>
+            Antes eu levava uma noite inteira para adaptar uma prova. Com as sugestões prontas, só reviso e ajusto.
+            <footer>Ana R.<small>Professora do 5º ano (exemplo)</small></footer>
+        </blockquote>
+        <blockquote>
+            A memória pedagógica me mostra o que já funcionou com cada aluno. Isso ajuda muito na troca de professor.
+            <footer>Carla M.<small>Coordenadora pedagógica (exemplo)</small></footer>
+        </blockquote>
+        <blockquote>
+            Gosto de fazer uma etapa de cada vez e de poder ouvir a pergunta. Fica mais fácil terminar.
+            <footer>Davi, 10 anos<small>Estudante (exemplo)</small></footer>
+        </blockquote>
+    </div>
+    <p class="aviso-exemplo">Depoimentos ilustrativos do protótipo, criados para demonstrar o uso da plataforma.</p>
+</section>
+
+
+<section id="planos" class="section cinza">
+    <div class="section-header">
+        <span>PLANOS</span>
+        <h2>Comece grátis. Cresça com a sua escola.</h2>
+        <p>O professor usa de graça. Escolas e redes ganham painéis e acompanhamento coletivo.</p>
+    </div>
+    <div class="planos">
+        <div class="plano">
+            <h3>Professor</h3>
+            <p class="preco">Grátis</p>
+            <p>Para começar hoje, na sua turma.</p>
+            <ul class="lista-check">
+                <li>Perfis de alunos ilimitados</li>
+                <li>Sugestões de adaptação</li>
+                <li>Área do aluno acessível</li>
+                <li>Registro de resultados</li>
+            </ul>
+            <a class="btn" href="cadastro.html">Criar conta grátis</a>
+        </div>
+        <div class="plano destaque">
+            <h3>Escola</h3>
+            <p class="preco">Sob consulta</p>
+            <p>Para equipes pedagógicas e salas de recursos (AEE).</p>
+            <ul class="lista-check">
+                <li>Tudo do plano Professor</li>
+                <li>Memória pedagógica compartilhada</li>
+                <li>Painel da coordenação</li>
+                <li>Formação para professores</li>
+            </ul>
+            <a class="btn" href="contato.html?assunto=escola">Falar com a equipe</a>
+        </div>
+        <div class="plano">
+            <h3>Rede de ensino</h3>
+            <p class="preco">Sob consulta</p>
+            <p>Para secretarias municipais e estaduais.</p>
+            <ul class="lista-check">
+                <li>Tudo do plano Escola</li>
+                <li>Indicadores por escola</li>
+                <li>Integração com bancos de dados</li>
+                <li>Suporte dedicado</li>
+            </ul>
+            <a class="btn-outline" href="contato.html?assunto=rede">Solicitar proposta</a>
+        </div>
+    </div>
+</section>
+
+
+<section class="cta">
+    <h2>Pronto para tornar suas atividades mais inclusivas?</h2>
+    <p>Comece a utilizar o IncluiEdu ou explore a demonstração com dados de exemplo.</p>
+    <div class="hero-botoes" style="justify-content:center">
+        <a class="btn-white" href="cadastro.html">Criar minha conta</a>
+        <button class="btn-white" type="button" onclick="entrarDemo('aluno')">Ver como o aluno enxerga</button>
+    </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+    <div class="rodape-grid">
+        <div>
+            <a href="index.html" class="logo"><span>Inclui</span>Edu</a>
+            <p>Assistente de Inclusão Pedagógica. A atividade se adapta ao aluno, e não o aluno à atividade.</p>
+            <p>Projeto acadêmico • Análise e Desenvolvimento de Sistemas • InnovaDay 2026</p>
+        </div>
+        <nav aria-label="Plataforma">
+            <h3>Plataforma</h3>
+            <a href="index.html#como-funciona">Como funciona</a>
+            <a href="professor.html">Área do professor</a>
+            <a href="aluno.html">Área do aluno</a>
+            <a href="adaptacao.html">Adaptação pedagógica</a>
+            <a href="materias.html">Matérias e exemplos</a>
+            <a href="index.html#planos">Planos</a>
+        </nav>
+        <nav aria-label="Aprender">
+            <h3>Aprender</h3>
+            <a href="conteudos.html">Educação inclusiva</a>
+            <a href="conteudos.html#dua">Desenho Universal (DUA)</a>
+            <a href="conteudos.html#legislacao">Legislação</a>
+            <a href="conteudos.html#videos">Vídeos</a>
+            <a href="dicas-estudo.html">Dicas de estudo</a>
+        </nav>
+        <nav aria-label="Projeto">
+            <h3>Projeto</h3>
+            <a href="sobre.html">Sobre e equipe</a>
+            <a href="contato.html">Contato e dúvidas</a>
+            <a href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+            <a href="sobre.html#creditos">Créditos das imagens</a>
+        </nav>
+    </div>
+    <div class="rodape-base">
+        <p>© <span data-ano>2026</span> IncluiEdu • Jéssica Furtado da Silva e José Edilson de Araujo Souza Junior</p>
+        <p>Feito com acessibilidade em mente ♿ • Use o botão ♿ para ajustar a página</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

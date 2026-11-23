@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Entrar">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Entrar</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-login">
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="login-container">
+
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <main class="login-card" id="conteudo">
+        <span class="login-label">BEM-VINDO DE VOLTA</span>
+        <h1>Entre na sua conta</h1>
+        <p>Acesse sua área do IncluiEdu.</p>
+
+        <form id="formLogin">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="seuemail@email.com" required autocomplete="email">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+            <button class="btn btn-full" type="submit">Entrar</button>
+        </form>
+
+        <p id="mensagemLogin" class="mensagem" role="alert"></p>
+
+        <div class="demo-login">
+            <strong>Quer testar?</strong> Use uma conta de demonstração (senha <strong>demo123</strong>):
+            <div class="botoes-linha">
+                <button class="btn-mini" type="button" onclick="preencherDemo('professor')">👩‍🏫 Professora</button>
+                <button class="btn-mini" type="button" onclick="preencherDemo('aluno')">👨‍🎓 Aluno</button>
+            </div>
+        </div>
+
+        <div class="login-footer">
+            <span>Ainda não possui uma conta?</span>
+            <a href="cadastro.html">Criar conta</a>
+        </div>
+    </main>
+
+    <p style="text-align:center;margin-top:18px"><a href="index.html">← Voltar para o site</a></p>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Técnicas de estudo com base científica, cronômetro Pomodoro e dicas de estudo acessível.">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Dicas de estudo">
+    <meta property="og:description" content="Técnicas de estudo com base científica, cronômetro Pomodoro e dicas de estudo acessível.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Dicas de estudo</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-vlibras>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header>
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <nav aria-label="Menu principal">
+        <a href="index.html">Início</a>
+        <a href="professor.html">Professor</a>
+        <a href="aluno.html">Aluno</a>
+        <a href="materias.html">Matérias</a>
+        <a href="conteudos.html">Conteúdos</a>
+        <a href="dicas-estudo.html">Dicas de estudo</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="contato.html">Contato</a>
+    </nav>
+
+    <div class="acoes">
+        <a class="btn-link" href="login.html">Entrar</a>
+        <a class="btn" href="cadastro.html">Criar conta</a>
+    </div>
+
+    <button class="botao-menu" id="botaoMenu" type="button" aria-expanded="false" aria-label="Abrir menu">☰</button>
+</header>
+
+<main id="conteudo">
+
+<section class="hero hero-pagina">
+    <div class="hero-texto">
+        <span>DICAS DE ESTUDO</span>
+        <h1>Estudar melhor, <strong>não só estudar mais.</strong></h1>
+        <p>Técnicas simples, com base em pesquisas sobre como o cérebro aprende, para você aprender mais e esquecer menos, no seu ritmo.</p>
+        <div class="hero-botoes">
+            <a class="btn" href="#pomodoro">Usar o cronômetro</a>
+            <a class="btn-outline" href="#tecnicas">Ver as técnicas</a>
+        </div>
+    </div>
+    <div class="hero-foto"><img src="assets/img/sala-colaborativa.jpg" alt="Crianças trabalhando em grupos em mesas compartilhadas na sala de aula" loading="eager" decoding="async"></div>
+</section>
+
+<section id="tecnicas" class="section">
+    <div class="section-header">
+        <span>TÉCNICAS QUE FUNCIONAM</span>
+        <h2>6 jeitos de aprender de verdade</h2>
+        <p>Pesquisas em psicologia da aprendizagem mostram que testar a si mesmo e espaçar os estudos estão entre as técnicas mais eficazes.</p>
+    </div>
+    <div class="dicas-grid">
+        <div class="dica-card"><div class="icone">❓</div><h3>Teste a si mesmo</h3><p>Feche o caderno e tente lembrar. Faça perguntas, use cartões (flashcards) ou explique em voz alta. Lembrar é o que fixa.</p></div>
+        <div class="dica-card" style="--cor:#14b8a6"><div class="icone">📅</div><h3>Espace as revisões</h3><p>Revise no dia seguinte, depois de 3 dias, depois de 1 semana. Pouco e várias vezes vale mais que muito de uma vez.</p></div>
+        <div class="dica-card" style="--cor:#d97706"><div class="icone">⏱️</div><h3>Blocos com pausas</h3><p>Estude 25 minutos e descanse 5 (técnica Pomodoro). A cada 4 blocos, uma pausa maior.</p></div>
+        <div class="dica-card" style="--cor:#16a34a"><div class="icone">🗺️</div><h3>Palavras + imagens</h3><p>Faça mapas mentais, desenhos e esquemas junto com o texto. Duas formas de representar ajudam a lembrar.</p></div>
+        <div class="dica-card" style="--cor:#dc2626"><div class="icone">🗣️</div><h3>Explique para alguém</h3><p>Ensinar um colega (ou o seu bichinho!) mostra o que você já entendeu e o que falta.</p></div>
+        <div class="dica-card" style="--cor:#7c3aed"><div class="icone">🔀</div><h3>Misture os assuntos</h3><p>Alternar tipos de exercício (intercalar) treina o cérebro a escolher a estratégia certa.</p></div>
+    </div>
+</section>
+
+<section id="pomodoro" class="section cinza">
+    <div class="section-header" style="margin-left:auto;margin-right:auto;text-align:center">
+        <span>FERRAMENTA</span>
+        <h2>Cronômetro de estudos</h2>
+        <p>Escolha o tempo, aperte “Iniciar” e foque. O site avisa (com som de voz) quando for hora da pausa.</p>
+    </div>
+    <div class="pomodoro">
+        <p id="pomodoroEstado">Hora de focar 📚</p>
+        <div class="pomodoro-visor" id="pomodoroVisor" role="timer" aria-live="off">25:00</div>
+        <div>
+            <label for="pomodoroMinutos">Tempo de foco:</label>
+            <select id="pomodoroMinutos">
+                <option value="10">10 min</option>
+                <option value="15">15 min</option>
+                <option value="25" selected>25 min</option>
+                <option value="40">40 min</option>
+            </select>
+        </div>
+        <div class="botoes-linha">
+            <button class="btn" type="button" id="pomodoroIniciar">▶ Iniciar</button>
+            <button class="btn-outline" type="button" id="pomodoroPausar">⏸ Pausar</button>
+            <button class="btn-outline" type="button" id="pomodoroZerar">↺ Zerar</button>
+        </div>
+        <p style="margin-top:16px;color:var(--text)">Blocos concluídos hoje: <strong id="pomodoroCiclos">0</strong></p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="bloco-split">
+        <div>
+            <span class="rotulo">Estudar com acessibilidade</span>
+            <h2>Cada pessoa tem o seu jeito, e ele merece respeito</h2>
+            <ul class="lista-check">
+                <li><strong>Tem TDAH?</strong> Use blocos curtos de 10–15 minutos, deixe o celular longe e marque cada tarefa concluída.</li>
+                <li><strong>Tem dislexia?</strong> Ouça o texto (botão ♿ → “Ler esta página”), aumente a fonte e use a leitura facilitada.</li>
+                <li><strong>Baixa visão?</strong> Ative o alto contraste e o zoom do navegador (Ctrl e +).</li>
+                <li><strong>É surdo?</strong> Prefira vídeos com Libras ou legenda e faça resumos visuais.</li>
+                <li><strong>Fica ansioso?</strong> Divida o conteúdo em partes pequenas e comemore cada etapa.</li>
+            </ul>
+            <p>E lembre-se: pedir adaptação não é “pedir moleza”. É um direito garantido pela Lei Brasileira de Inclusão.</p>
+        </div>
+        <figure><img src="assets/img/expressao-musica.jpg" alt="Estudante tocando ukulele durante apresentação em evento de educação inclusiva" loading="lazy" decoding="async"><figcaption>Há muitas formas de aprender e de se expressar.</figcaption></figure>
+    </div>
+</section>
+
+<section class="section cinza">
+    <div class="section-header">
+        <span>ROTINA</span>
+        <h2>Um plano simples para a semana</h2>
+    </div>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Dia</th><th>O que fazer</th><th>Tempo</th></tr></thead>
+            <tbody>
+                <tr><td>Segunda</td><td>Revisar a matéria da semana anterior com perguntas</td><td>2 × 25 min</td></tr>
+                <tr><td>Terça</td><td>Matemática: exercícios misturados</td><td>2 × 25 min</td></tr>
+                <tr><td>Quarta</td><td>Leitura + mapa mental (Português, História ou Ciências)</td><td>2 × 25 min</td></tr>
+                <tr><td>Quinta</td><td>Explicar um conteúdo para alguém da família</td><td>1 × 25 min</td></tr>
+                <tr><td>Sexta</td><td>Flashcards dos conteúdos da semana</td><td>1 × 25 min</td></tr>
+                <tr><td>Fim de semana</td><td>Descanso, esporte, sono e lazer também fazem parte da aprendizagem</td><td>😊</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span>MITOS E VERDADES</span>
+        <h2>Quiz rápido</h2>
+    </div>
+    <div class="quiz faq">
+        <div class="quiz-pergunta" data-explica="Reler dá sensação de que aprendeu, mas tentar lembrar (testar-se) fixa muito mais.">
+            <h3>1. Reler o texto várias vezes é a melhor forma de estudar.</h3>
+            <div class="quiz-opcoes">
+                <button class="quiz-opcao" type="button">Verdade</button>
+                <button class="quiz-opcao" type="button" data-certa="1">Mito</button>
+            </div>
+            <p class="quiz-feedback" hidden></p>
+        </div>
+        <div class="quiz-pergunta" data-explica="Durante o sono o cérebro organiza e consolida o que foi aprendido no dia.">
+            <h3>2. Dormir bem ajuda a memorizar.</h3>
+            <div class="quiz-opcoes">
+                <button class="quiz-opcao" type="button" data-certa="1">Verdade</button>
+                <button class="quiz-opcao" type="button">Mito</button>
+            </div>
+            <p class="quiz-feedback" hidden></p>
+        </div>
+        <div class="quiz-pergunta" data-explica="Não há evidência forte de que ensinar só no 'estilo' preferido melhore o aprendizado. Combinar formas (ver, ouvir, fazer) ajuda todos.">
+            <h3>3. Cada pessoa só aprende com um único “estilo” (visual, auditivo ou cinestésico).</h3>
+            <div class="quiz-opcoes">
+                <button class="quiz-opcao" type="button">Verdade</button>
+                <button class="quiz-opcao" type="button" data-certa="1">Mito</button>
+            </div>
+            <p class="quiz-feedback" hidden></p>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+    <div class="rodape-grid">
+        <div>
+            <a href="index.html" class="logo"><span>Inclui</span>Edu</a>
+            <p>Assistente de Inclusão Pedagógica. A atividade se adapta ao aluno, e não o aluno à atividade.</p>
+            <p>Projeto acadêmico • Análise e Desenvolvimento de Sistemas • InnovaDay 2026</p>
+        </div>
+        <nav aria-label="Plataforma">
+            <h3>Plataforma</h3>
+            <a href="index.html#como-funciona">Como funciona</a>
+            <a href="professor.html">Área do professor</a>
+            <a href="aluno.html">Área do aluno</a>
+            <a href="adaptacao.html">Adaptação pedagógica</a>
+            <a href="materias.html">Matérias e exemplos</a>
+            <a href="index.html#planos">Planos</a>
+        </nav>
+        <nav aria-label="Aprender">
+            <h3>Aprender</h3>
+            <a href="conteudos.html">Educação inclusiva</a>
+            <a href="conteudos.html#dua">Desenho Universal (DUA)</a>
+            <a href="conteudos.html#legislacao">Legislação</a>
+            <a href="conteudos.html#videos">Vídeos</a>
+            <a href="dicas-estudo.html">Dicas de estudo</a>
+        </nav>
+        <nav aria-label="Projeto">
+            <h3>Projeto</h3>
+            <a href="sobre.html">Sobre e equipe</a>
+            <a href="contato.html">Contato e dúvidas</a>
+            <a href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+            <a href="sobre.html#creditos">Créditos das imagens</a>
+        </nav>
+    </div>
+    <div class="rodape-base">
+        <p>© <span data-ano>2026</span> IncluiEdu • Jéssica Furtado da Silva e José Edilson de Araujo Souza Junior</p>
+        <p>Feito com acessibilidade em mente ♿ • Use o botão ♿ para ajustar a página</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

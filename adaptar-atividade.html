@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Adaptar atividade">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Adaptar atividade</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+    <a href="atividades.html">← Atividades</a>
+</header>
+
+<main class="form-page" id="conteudo">
+    <section class="dashboard-card">
+        <span>ADAPTAÇÃO PEDAGÓGICA</span>
+        <h1>Adaptar atividade</h1>
+        <p>Selecione uma atividade e um aluno para receber sugestões de adaptação baseadas no perfil.</p>
+
+        <form id="formAdaptacao">
+            <label for="atividadeSelecionada">Atividade</label>
+            <select id="atividadeSelecionada" required></select>
+            <label for="alunoSelecionado">Aluno</label>
+            <select id="alunoSelecionado" required></select>
+            <button class="btn" type="submit">✨ Gerar sugestões</button>
+        </form>
+        <p class="dica" style="margin-top:12px">Não encontrou? <a href="nova-atividade.html">Criar atividade</a> • <a href="alunos.html">Cadastrar aluno</a></p>
+    </section>
+
+    <section id="resultadoAdaptacao" class="dashboard-card" style="display:none;" aria-live="polite"></section>
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>

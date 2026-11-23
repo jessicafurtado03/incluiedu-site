@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Área do Aluno">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Área do Aluno</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+    <div class="usuario-menu">
+        <a href="dicas-estudo.html">💡 Dicas de estudo</a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
+</header>
+
+<main class="dashboard-aluno" id="conteudo">
+    <div class="aluno-topo">
+        <div class="aluno-boas-vindas">
+            <span>ÁREA DO ALUNO</span>
+            <h1 id="nomeAlunoLogado">Olá! 👋</h1>
+            <p>Aqui estão suas atividades. Faça no seu ritmo, uma etapa de cada vez.</p>
+            <div id="progressoAluno"></div>
+        </div>
+        <img src="assets/img/colegas-aprendendo-juntos.jpg" alt="Dois alunos, um deles com deficiência, montando um jogo pedagógico juntos" loading="lazy" decoding="async">
+    </div>
+
+    <h2 style="margin-bottom:14px">📝 Minhas atividades</h2>
+    <section class="atividade-aluno-grid" id="atividadesAluno" aria-label="Minhas atividades"></section>
+
+    <h2 style="margin:34px 0 4px">📚 Minhas matérias</h2>
+    <p style="color:var(--text)">Exercícios e explicações de cada matéria.</p>
+    <nav class="materias-aluno" aria-label="Matérias"><a href="materia-portugues.html" style="--cor:#d97706"><span aria-hidden="true">📖</span>Língua Portuguesa</a><a href="materia-matematica.html" style="--cor:#5b5bd6"><span aria-hidden="true">➗</span>Matemática</a><a href="materia-ciencias.html" style="--cor:#14b8a6"><span aria-hidden="true">🔬</span>Ciências</a><a href="materia-historia.html" style="--cor:#dc2626"><span aria-hidden="true">🏛️</span>História</a><a href="materia-geografia.html" style="--cor:#16a34a"><span aria-hidden="true">🗺️</span>Geografia</a><a href="materia-ingles.html" style="--cor:#0ea5e9"><span aria-hidden="true">🌎</span>Inglês</a><a href="materia-artes.html" style="--cor:#7c3aed"><span aria-hidden="true">🎨</span>Artes</a></nav>
+
+    <div class="dashboard-grid">
+        <section class="dashboard-card">
+            <h2>⏱️ Hora de estudar?</h2>
+            <p>Use o cronômetro de estudos: 25 minutos de foco e 5 de pausa.</p>
+            <a class="btn-small" href="dicas-estudo.html#pomodoro">Abrir cronômetro</a>
+        </section>
+        <section class="dashboard-card">
+            <h2>💡 Dica da semana</h2>
+            <p>Depois de estudar, feche o caderno e tente explicar o conteúdo em voz alta. Lembrar é o que fixa!</p>
+            <a class="btn-small" href="dicas-estudo.html">Mais dicas</a>
+        </section>
+    </div>
+
+    <section class="dashboard-card" style="margin-top:30px">
+        <h2>♿ Deixe do seu jeito</h2>
+        <p>Use o botão ♿ no canto da tela para aumentar as letras, mudar as cores ou ouvir o texto.</p>
+    </section>
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Cadastro">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Cadastro</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-login">
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="login-container">
+
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <main class="login-card" id="conteudo">
+        <span class="login-label">COMEÇAR NO INCLUIEDU</span>
+        <h1>Criar sua conta</h1>
+        <p>Cadastre-se para começar. É gratuito para professores.</p>
+
+        <form id="formCadastro">
+            <label for="nomeCadastro">Nome completo</label>
+            <input type="text" id="nomeCadastro" placeholder="Seu nome" required autocomplete="name">
+            <label for="emailCadastro">E-mail</label>
+            <input type="email" id="emailCadastro" placeholder="seuemail@email.com" required autocomplete="email">
+            <label for="senhaCadastro">Senha</label>
+            <input type="password" id="senhaCadastro" placeholder="Mínimo de 6 caracteres" required minlength="6" autocomplete="new-password">
+            <label for="tipoCadastro">Tipo de usuário</label>
+            <select id="tipoCadastro">
+                <option value="professor">Professor</option>
+                <option value="aluno">Aluno</option>
+            </select>
+            <button class="btn btn-full" type="submit">Criar conta</button>
+        </form>
+
+        <p id="mensagemCadastro" class="mensagem" role="alert"></p>
+
+        <div class="login-footer">
+            <span>Já possui uma conta?</span>
+            <a href="login.html">Entrar</a>
+        </div>
+    </main>
+
+    <p style="text-align:center;margin-top:18px"><a href="index.html">← Voltar para o site</a></p>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

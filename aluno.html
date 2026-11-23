@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Área do aluno do IncluiEdu: atividades adaptadas, progresso e acessibilidade.">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Aluno">
+    <meta property="og:description" content="Área do aluno do IncluiEdu: atividades adaptadas, progresso e acessibilidade.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Aluno</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-vlibras>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header>
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <nav aria-label="Menu principal">
+        <a href="index.html">Início</a>
+        <a href="professor.html">Professor</a>
+        <a href="aluno.html">Aluno</a>
+        <a href="materias.html">Matérias</a>
+        <a href="conteudos.html">Conteúdos</a>
+        <a href="dicas-estudo.html">Dicas de estudo</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="contato.html">Contato</a>
+    </nav>
+
+    <div class="acoes">
+        <a class="btn-link" href="login.html">Entrar</a>
+        <a class="btn" href="cadastro.html">Criar conta</a>
+    </div>
+
+    <button class="botao-menu" id="botaoMenu" type="button" aria-expanded="false" aria-label="Abrir menu">☰</button>
+</header>
+
+<main id="conteudo">
+
+<section class="hero hero-pagina">
+    <div class="hero-texto">
+        <span>ÁREA DO ALUNO</span>
+        <h1>Aprender pode acontecer de <strong>várias formas.</strong></h1>
+        <p>Um espaço pensado para que você encontre suas atividades de maneira simples, organizada e acessível.</p>
+        <div class="hero-botoes">
+            <a class="btn" href="login.html">Entrar na minha área</a>
+            <button class="btn-outline" type="button" onclick="entrarDemo('aluno')">▶ Ver demonstração</button>
+        </div>
+    </div>
+    <div class="hero-foto">
+        <img src="assets/img/colegas-aprendendo-juntos.jpg" alt="Dois alunos, um deles com deficiência, montando um jogo pedagógico juntos" loading="eager" decoding="async">
+        <div class="selo-flutuante s2"><span>🏆</span><div>Atividade concluída!<small>uma etapa de cada vez</small></div></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span>UMA EXPERIÊNCIA MAIS SIMPLES</span>
+        <h2>Atividades organizadas para você</h2>
+    </div>
+    <div class="recursos-grid">
+        <article><div aria-hidden="true">📝</div><h3>Minhas atividades</h3><p>Encontre rapidamente as atividades que precisam ser realizadas.</p><a class="btn-small" href="dashboard-aluno.html">Acessar</a></article>
+        <article><div aria-hidden="true">📊</div><h3>Meu progresso</h3><p>Acompanhe suas atividades concluídas.</p><a class="btn-small" href="dashboard-aluno.html">Ver progresso</a></article>
+        <article><div aria-hidden="true">♿</div><h3>Acessibilidade</h3><p>Aumente o texto, use alto contraste ou peça para o site ler em voz alta no botão ♿.</p><a class="btn-small" href="conteudos.html#acessibilidade">Saiba mais</a></article>
+        <article><div aria-hidden="true">🔊</div><h3>Ouvir a atividade</h3><p>Toque em “Ouvir” e escute cada etapa quantas vezes quiser.</p><a class="btn-small" href="atividade-aluno.html?id=301">Experimentar</a></article>
+        <article><div aria-hidden="true">⏱️</div><h3>Cronômetro de estudo</h3><p>Estude em blocos curtos com pausas, usando a técnica Pomodoro.</p><a class="btn-small" href="dicas-estudo.html#pomodoro">Usar agora</a></article>
+        <article><div aria-hidden="true">💡</div><h3>Dicas de estudo</h3><p>Técnicas simples para aprender mais e esquecer menos.</p><a class="btn-small" href="dicas-estudo.html">Ver dicas</a></article>
+    </div>
+</section>
+
+<section class="section cinza">
+    <div class="bloco-split">
+        <div>
+            <span class="rotulo">Do seu jeito</span>
+            <h2>Cada pessoa aprende de um jeito, e está tudo bem</h2>
+            <p>Algumas pessoas entendem melhor ouvindo, outras vendo um desenho, outras fazendo. No IncluiEdu, seu professor pode preparar a atividade do jeito que funciona para você.</p>
+            <ul class="lista-check">
+                <li>Letras maiores e mais espaço entre as linhas</li>
+                <li>Etapas curtas, uma por vez</li>
+                <li>Opção de ouvir as perguntas</li>
+                <li>Responder escrevendo, falando ou desenhando</li>
+            </ul>
+        </div>
+        <figure><img src="assets/img/aula-de-libras.jpg" alt="Estudantes fazendo sinais durante uma aula de Libras na Universidade de Brasília" loading="lazy" decoding="async"><figcaption>Aula de Libras na Universidade de Brasília.</figcaption></figure>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Seu aprendizado. Seu ritmo. Suas possibilidades.</h2>
+    <p>O IncluiEdu existe para tornar a aprendizagem mais acessível.</p>
+    <a class="btn-white" href="dicas-estudo.html">Ver dicas de estudo</a>
+</section>
+
+</main>
+
+<footer class="rodape">
+    <div class="rodape-grid">
+        <div>
+            <a href="index.html" class="logo"><span>Inclui</span>Edu</a>
+            <p>Assistente de Inclusão Pedagógica. A atividade se adapta ao aluno, e não o aluno à atividade.</p>
+            <p>Projeto acadêmico • Análise e Desenvolvimento de Sistemas • InnovaDay 2026</p>
+        </div>
+        <nav aria-label="Plataforma">
+            <h3>Plataforma</h3>
+            <a href="index.html#como-funciona">Como funciona</a>
+            <a href="professor.html">Área do professor</a>
+            <a href="aluno.html">Área do aluno</a>
+            <a href="adaptacao.html">Adaptação pedagógica</a>
+            <a href="materias.html">Matérias e exemplos</a>
+            <a href="index.html#planos">Planos</a>
+        </nav>
+        <nav aria-label="Aprender">
+            <h3>Aprender</h3>
+            <a href="conteudos.html">Educação inclusiva</a>
+            <a href="conteudos.html#dua">Desenho Universal (DUA)</a>
+            <a href="conteudos.html#legislacao">Legislação</a>
+            <a href="conteudos.html#videos">Vídeos</a>
+            <a href="dicas-estudo.html">Dicas de estudo</a>
+        </nav>
+        <nav aria-label="Projeto">
+            <h3>Projeto</h3>
+            <a href="sobre.html">Sobre e equipe</a>
+            <a href="contato.html">Contato e dúvidas</a>
+            <a href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+            <a href="sobre.html#creditos">Créditos das imagens</a>
+        </nav>
+    </div>
+    <div class="rodape-base">
+        <p>© <span data-ano>2026</span> IncluiEdu • Jéssica Furtado da Silva e José Edilson de Araujo Souza Junior</p>
+        <p>Feito com acessibilidade em mente ♿ • Use o botão ♿ para ajustar a página</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

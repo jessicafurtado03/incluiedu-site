@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Área do professor do IncluiEdu: alunos, atividades, adaptações e resultados.">
+    <meta name="theme-color" content="#5b5bd6">
+    <meta property="og:title" content="IncluiEdu | Professor">
+    <meta property="og:description" content="Área do professor do IncluiEdu: alunos, atividades, adaptações e resultados.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Professor</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-vlibras>
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header>
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+
+    <nav aria-label="Menu principal">
+        <a href="index.html">Início</a>
+        <a href="professor.html">Professor</a>
+        <a href="aluno.html">Aluno</a>
+        <a href="materias.html">Matérias</a>
+        <a href="conteudos.html">Conteúdos</a>
+        <a href="dicas-estudo.html">Dicas de estudo</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="contato.html">Contato</a>
+    </nav>
+
+    <div class="acoes">
+        <a class="btn-link" href="login.html">Entrar</a>
+        <a class="btn" href="cadastro.html">Criar conta</a>
+    </div>
+
+    <button class="botao-menu" id="botaoMenu" type="button" aria-expanded="false" aria-label="Abrir menu">☰</button>
+</header>
+
+<main id="conteudo">
+
+<section class="hero hero-pagina">
+    <div class="hero-texto">
+        <span>ÁREA DO PROFESSOR</span>
+        <h1>Simplifique o planejamento. <strong>Potencialize a inclusão.</strong></h1>
+        <p>Conheça seus alunos, adapte atividades, registre resultados e acompanhe a evolução pedagógica.</p>
+        <div class="hero-botoes">
+            <a class="btn" href="login.html">Acessar minha área</a>
+            <button class="btn-outline" type="button" onclick="entrarDemo('professor')">▶ Entrar na demonstração</button>
+        </div>
+    </div>
+    <div class="hero-foto">
+        <img src="assets/img/sala-de-recursos.jpg" alt="Professores e alunos em uma Sala de Integração e Recursos em Porto Alegre" loading="eager" decoding="async">
+        <div class="selo-flutuante s1"><span>👩‍🏫</span><div>Professor no comando<small>a decisão final é sempre sua</small></div></div>
+    </div>
+</section>
+
+<section id="recursos" class="section">
+    <div class="section-header">
+        <span>FERRAMENTAS DO PROFESSOR</span>
+        <h2>Tudo que você precisa em um só lugar.</h2>
+    </div>
+    <div class="recursos-grid">
+        <article><div aria-hidden="true">👨‍🎓</div><h3>Meus alunos</h3><p>Cadastre e acompanhe seus alunos e seus perfis pedagógicos.</p><a class="btn-small" href="alunos.html">Acessar</a></article>
+        <article><div aria-hidden="true">🏫</div><h3>Minhas turmas</h3><p>Visão geral da turma, números e últimas atividades.</p><a class="btn-small" href="dashboard-professor.html">Acessar</a></article>
+        <article><div aria-hidden="true">📝</div><h3>Atividades</h3><p>Crie e organize atividades por disciplina.</p><a class="btn-small" href="atividades.html">Acessar</a></article>
+        <article><div aria-hidden="true">🧩</div><h3>Adaptar atividade</h3><p>Receba sugestões e crie versões adaptadas.</p><a class="btn-small" href="adaptar-atividade.html">Acessar</a></article>
+        <article><div aria-hidden="true">📊</div><h3>Resultados</h3><p>Registre e acompanhe o desempenho.</p><a class="btn-small" href="resultados.html">Acessar</a></article>
+        <article><div aria-hidden="true">🧠</div><h3>Memória pedagógica</h3><p>Consulte as estratégias já utilizadas com cada aluno.</p><a class="btn-small" href="aluno-perfil.html?id=101">Consultar</a></article>
+    </div>
+</section>
+
+<section id="como-funciona" class="section cinza">
+    <div class="bloco-split invertido">
+        <div>
+            <span class="rotulo">Como funciona para o professor</span>
+            <h2>Menos tempo adaptando, mais tempo ensinando</h2>
+            <p>O IncluiEdu não substitui o professor: ele organiza informações e sugere caminhos. Você revisa, ajusta e aprova.</p>
+            <ul class="lista-check">
+                <li><strong>Registre</strong> as características e os recursos que ajudam cada aluno.</li>
+                <li><strong>Cadastre</strong> a atividade original, como você já faz hoje.</li>
+                <li><strong>Receba</strong> estratégias explicadas e um texto em etapas.</li>
+                <li><strong>Acompanhe</strong> o resultado e construa a memória pedagógica.</li>
+            </ul>
+            <a class="btn" href="conteudos.html#adaptar">Guia: como adaptar atividades</a>
+        </div>
+        <figure><img src="assets/img/leitura-compartilhada.jpg" alt="Crianças e adultos leem um livro juntos em uma sala de aula" loading="lazy" decoding="async"></figure>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span>BOAS PRÁTICAS</span>
+        <h2>5 cuidados ao adaptar uma atividade</h2>
+    </div>
+    <div class="dicas-grid">
+        <div class="dica-card"><div class="icone">🎯</div><h3>Mantenha o objetivo</h3><p>Adaptar é mudar o caminho, não reduzir a expectativa. A habilidade da BNCC continua a mesma.</p></div>
+        <div class="dica-card" style="--cor:#14b8a6"><div class="icone">👂</div><h3>Ouça o aluno</h3><p>O próprio estudante e a família sabem o que ajuda. Registre isso no perfil.</p></div>
+        <div class="dica-card" style="--cor:#d97706"><div class="icone">🪜</div><h3>Uma coisa por vez</h3><p>Enunciados curtos e etapas numeradas reduzem a sobrecarga.</p></div>
+        <div class="dica-card" style="--cor:#16a34a"><div class="icone">🖼️</div><h3>Mostre, não só diga</h3><p>Imagens, esquemas e material concreto ajudam a turma inteira.</p></div>
+        <div class="dica-card" style="--cor:#dc2626"><div class="icone">🗣️</div><h3>Varie a resposta</h3><p>Oral, desenho, marcação, digital: o que importa é demonstrar o que aprendeu.</p></div>
+        <div class="dica-card" style="--cor:#7c3aed"><div class="icone">🤝</div><h3>Trabalhe em rede</h3><p>Compartilhe o que funcionou com o AEE, a coordenação e os outros professores.</p></div>
+    </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+    <div class="rodape-grid">
+        <div>
+            <a href="index.html" class="logo"><span>Inclui</span>Edu</a>
+            <p>Assistente de Inclusão Pedagógica. A atividade se adapta ao aluno, e não o aluno à atividade.</p>
+            <p>Projeto acadêmico • Análise e Desenvolvimento de Sistemas • InnovaDay 2026</p>
+        </div>
+        <nav aria-label="Plataforma">
+            <h3>Plataforma</h3>
+            <a href="index.html#como-funciona">Como funciona</a>
+            <a href="professor.html">Área do professor</a>
+            <a href="aluno.html">Área do aluno</a>
+            <a href="adaptacao.html">Adaptação pedagógica</a>
+            <a href="materias.html">Matérias e exemplos</a>
+            <a href="index.html#planos">Planos</a>
+        </nav>
+        <nav aria-label="Aprender">
+            <h3>Aprender</h3>
+            <a href="conteudos.html">Educação inclusiva</a>
+            <a href="conteudos.html#dua">Desenho Universal (DUA)</a>
+            <a href="conteudos.html#legislacao">Legislação</a>
+            <a href="conteudos.html#videos">Vídeos</a>
+            <a href="dicas-estudo.html">Dicas de estudo</a>
+        </nav>
+        <nav aria-label="Projeto">
+            <h3>Projeto</h3>
+            <a href="sobre.html">Sobre e equipe</a>
+            <a href="contato.html">Contato e dúvidas</a>
+            <a href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+            <a href="sobre.html#creditos">Créditos das imagens</a>
+        </nav>
+    </div>
+    <div class="rodape-base">
+        <p>© <span data-ano>2026</span> IncluiEdu • Jéssica Furtado da Silva e José Edilson de Araujo Souza Junior</p>
+        <p>Feito com acessibilidade em mente ♿ • Use o botão ♿ para ajustar a página</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
