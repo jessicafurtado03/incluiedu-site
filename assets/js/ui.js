@@ -180,7 +180,7 @@ function revelar(raiz = document) {
     if (!("IntersectionObserver" in window)) { itens.forEach(i => i.classList.add("visivel")); return; }
     const obs = new IntersectionObserver(entradas => entradas.forEach(en => {
         if (en.isIntersecting) { en.target.classList.add("visivel"); obs.unobserve(en.target); }
-    }), { threshold: 0.12 });
+    }), { threshold: 0, rootMargin: "0px 0px -8% 0px" });
     itens.forEach(i => obs.observe(i));
 }
 document.querySelectorAll(".section-header, .etapas article, .recursos-grid article, .card-foto, .materia-card, .plano, .dica-card, .bloco-split > *, .fluxo-passo, .aula")
