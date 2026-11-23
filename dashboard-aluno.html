@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Área do Aluno">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
@@ -13,14 +13,14 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="dashboardAluno">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
     <div class="usuario-menu">
-        <a href="dicas-estudo.html">💡 Dicas de estudo</a>
+        <span class="usuario-chip"><span class="usuario-avatar" aria-hidden="true">🧒</span><span data-nome-usuario>Aluno</span></span>
         <button type="button" onclick="sair()">Sair</button>
     </div>
 </header>
@@ -29,18 +29,26 @@
     <div class="aluno-topo">
         <div class="aluno-boas-vindas">
             <span>ÁREA DO ALUNO</span>
-            <h1 id="nomeAlunoLogado">Olá! 👋</h1>
+            <h1>Olá, <span data-primeiro-nome>aluno</span>! 👋</h1>
             <p>Aqui estão suas atividades. Faça no seu ritmo, uma etapa de cada vez.</p>
             <div id="progressoAluno"></div>
         </div>
-        <img src="assets/img/colegas-aprendendo-juntos.jpg" alt="Dois alunos, um deles com deficiência, montando um jogo pedagógico juntos" loading="lazy" decoding="async">
+        <div class="aluno-mascote" aria-hidden="true">
+            <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" fill="#eef0ff"/><circle cx="100" cy="108" r="58" fill="#ffc542"/>
+            <circle cx="80" cy="98" r="8" fill="#26304a"/><circle cx="120" cy="98" r="8" fill="#26304a"/>
+            <path d="M78 124 q22 20 44 0" stroke="#26304a" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="66" cy="118" r="8" fill="#ff8a65" opacity=".6"/><circle cx="134" cy="118" r="8" fill="#ff8a65" opacity=".6"/>
+            <path d="M100 22 l9 19 21 3 -15 14 4 21 -19 -10 -19 10 4 -21 -15 -14 21 -3z" fill="#5b54e8"/></svg>
+        </div>
     </div>
 
-    <h2 style="margin-bottom:14px">📝 Minhas atividades</h2>
+    <h2 class="titulo-secao">🏅 Minhas conquistas</h2>
+    <div class="conquistas" id="conquistas"></div>
+
+    <h2 class="titulo-secao">📝 Minhas atividades</h2>
     <section class="atividade-aluno-grid" id="atividadesAluno" aria-label="Minhas atividades"></section>
 
-    <h2 style="margin:34px 0 4px">📚 Minhas matérias</h2>
-    <p style="color:var(--text)">Exercícios e explicações de cada matéria.</p>
+    <h2 class="titulo-secao">📚 Minhas matérias</h2>
     <nav class="materias-aluno" aria-label="Matérias"><a href="materia-portugues.html" style="--cor:#d97706"><span aria-hidden="true">📖</span>Língua Portuguesa</a><a href="materia-matematica.html" style="--cor:#5b5bd6"><span aria-hidden="true">➗</span>Matemática</a><a href="materia-ciencias.html" style="--cor:#14b8a6"><span aria-hidden="true">🔬</span>Ciências</a><a href="materia-historia.html" style="--cor:#dc2626"><span aria-hidden="true">🏛️</span>História</a><a href="materia-geografia.html" style="--cor:#16a34a"><span aria-hidden="true">🗺️</span>Geografia</a><a href="materia-ingles.html" style="--cor:#0ea5e9"><span aria-hidden="true">🌎</span>Inglês</a><a href="materia-artes.html" style="--cor:#7c3aed"><span aria-hidden="true">🎨</span>Artes</a></nav>
 
     <div class="dashboard-grid">
@@ -50,19 +58,17 @@
             <a class="btn-small" href="dicas-estudo.html#pomodoro">Abrir cronômetro</a>
         </section>
         <section class="dashboard-card">
-            <h2>💡 Dica da semana</h2>
-            <p>Depois de estudar, feche o caderno e tente explicar o conteúdo em voz alta. Lembrar é o que fixa!</p>
-            <a class="btn-small" href="dicas-estudo.html">Mais dicas</a>
+            <h2>♿ Deixe do seu jeito</h2>
+            <p>Use o botão ♿ no canto da tela para aumentar as letras, mudar as cores, desligar animações ou ouvir o texto.</p>
         </section>
     </div>
-
-    <section class="dashboard-card" style="margin-top:30px">
-        <h2>♿ Deixe do seu jeito</h2>
-        <p>Use o botão ♿ no canto da tela para aumentar as letras, mudar as cores ou ouvir o texto.</p>
-    </section>
 </main>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

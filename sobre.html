@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sobre o IncluiEdu: o problema, a equipe, a evolução do projeto e créditos.">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Sobre o projeto">
     <meta property="og:description" content="Sobre o IncluiEdu: o problema, a equipe, a evolução do projeto e créditos.">
     <meta property="og:type" content="website">
@@ -13,7 +13,7 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-vlibras>
+<body data-vlibras data-pagina="">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
@@ -87,7 +87,7 @@
                 <li>Definição do problema e do público-alvo</li>
                 <li>Pesquisa e levantamento de dados (INEP)</li>
                 <li>Funcionalidades e telas planejadas</li>
-                <li>Protótipo funcional: cadastros, adaptação com sugestões, área do aluno e resultados</li>
+                <li>Plataforma funcional: contas com senha protegida, banco de dados IndexedDB, adaptação com prévia visual, área do aluno e resultados</li>
                 <li>Recursos de acessibilidade e conteúdos educativos</li>
             </ul>
         </div>
@@ -97,13 +97,13 @@
                 <li>Login seguro e compartilhamento entre professores da escola</li>
                 <li>Mais estratégias e modelos de atividades por disciplina</li>
                 <li>Exportar atividade adaptada em PDF</li>
-                <li>Testes com professores e salas de recursos</li>
+                <li>Validação com professores e salas de recursos</li>
             </ul>
         </div>
     </div>
     <div class="tecnologias">
         <span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span>
-        <span class="tag">LocalStorage</span><span class="tag">Web Speech API</span><span class="tag">VLibras</span>
+        <span class="tag">IndexedDB (banco de dados no navegador)</span><span class="tag">SVG e Canvas</span><span class="tag">SubtleCrypto (SHA-256)</span><span class="tag">Web Speech API</span><span class="tag">VLibras</span>
         <span class="tag">GitHub Pages</span>
     </div>
 </section>
@@ -132,7 +132,7 @@
             <li><strong>expressao-musica.jpg</strong>: “IBPA 19885 - A Secretaria Municipal de Educação (Smed) e a Secretaria Municipal de - 2018-11-21 - Manoelle Duarte-SMED-PMPA.jpg”, por Manoelle Duarte/SMED/PMPA, licença Attribution, via <a href="https://commons.wikimedia.org/wiki/File:IBPA_19885_-_A_Secretaria_Municipal_de_Educa%C3%A7%C3%A3o_(Smed)_e_a_Secretaria_Municipal_de_-_2018-11-21_-_Manoelle_Duarte-SMED-PMPA.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</li>
             <li><strong>leitura-braille.jpg</strong>: “Health, Inclusivity (Braille, Unesco Review) - UNESCO - PHOTO0000000840 0001.tiff”, por Michel Claude, licença CC BY-SA 3.0 igo, via <a href="https://commons.wikimedia.org/wiki/File:Health,_Inclusivity_(Braille,_Unesco_Review)_-_UNESCO_-_PHOTO0000000840_0001.tiff" target="_blank" rel="noopener">Wikimedia Commons</a>.</li>
     </ul>
-    <p class="aviso-exemplo">Os nomes de alunos, professores e depoimentos usados na demonstração são fictícios.</p>
+    <p class="aviso-exemplo">Os nomes dos alunos de exemplo são fictícios.</p>
 </section>
 
 </main>
@@ -176,7 +176,11 @@
     </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

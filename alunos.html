@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Alunos">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
@@ -13,13 +13,16 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="alunos">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
-    <a class="btn" href="dashboard-professor.html">Dashboard</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
 </header>
 
 <div class="dashboard">
@@ -32,61 +35,52 @@
         <a href="resultados.html">📊 Resultados</a>
         <a href="materias.html">📚 Matérias</a>
         <a href="conteudos.html">💡 Conteúdos</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
     </aside>
 
     <main class="dashboard-content" id="conteudo">
-
-        <div class="demo-barra">
-            <p>🧪 <strong>Modo demonstração:</strong> os dados ficam salvos só neste navegador.</p>
-            <div class="botoes-linha">
-                <button class="btn-mini" type="button" onclick="restaurarDemonstracao()">↻ Carregar dados de exemplo</button>
-                <button class="btn-mini" type="button" onclick="limparDados()">🗑 Limpar dados</button>
-            </div>
-        </div>
-
         <div class="dashboard-title">
             <div>
-                <span>MINHA TURMA</span>
+                <span>GESTÃO DE ALUNOS</span>
                 <h1>Alunos</h1>
-                <p>Gerencie os perfis pedagógicos dos seus alunos.</p>
+                <p>Cadastre, edite e acompanhe o perfil de aprendizagem de cada aluno.</p>
             </div>
+            
         </div>
 
         <section class="dashboard-card">
-            <div class="card-header"><h2>Cadastrar aluno</h2></div>
+            <h2 id="tituloFormAluno">Cadastrar aluno</h2>
             <form id="formAluno" class="form-grid">
-                <div>
-                    <label for="nomeAluno">Nome do aluno</label>
-                    <input type="text" id="nomeAluno" placeholder="Nome completo" required>
-                </div>
-                <div>
-                    <label for="turmaAluno">Turma</label>
-                    <input type="text" id="turmaAluno" placeholder="Ex.: 5º Ano A" required>
-                </div>
-                <div class="form-full">
-                    <label for="caracteristicasAluno">Características de aprendizagem</label>
-                    <textarea id="caracteristicasAluno" placeholder="Ex.: TDAH, perde o foco em textos longos; dislexia; baixa visão; surdez (Libras)..." rows="4"></textarea>
-                </div>
-                <div class="form-full">
-                    <label for="recursosAluno">Recursos que facilitam a aprendizagem</label>
-                    <textarea id="recursosAluno" placeholder="Ex.: imagens, instruções curtas, áudio, fonte ampliada..." rows="4"></textarea>
-                </div>
-                <div class="form-full">
-                    <button class="btn" type="submit">Cadastrar aluno</button>
+                <input type="hidden" id="alunoId">
+                <div><label for="nomeAluno">Nome do aluno</label><input type="text" id="nomeAluno" required placeholder="Nome completo"></div>
+                <div><label for="turmaAluno">Turma</label><input type="text" id="turmaAluno" required placeholder="Ex.: 5º Ano A"></div>
+                <div class="col-2"><label for="caracteristicasAluno">Características de aprendizagem</label>
+                <textarea id="caracteristicasAluno" rows="3" placeholder="Ex.: TDAH, perde o foco em textos longos; dislexia; baixa visão; TEA..."></textarea></div>
+                <div class="col-2"><label for="recursosAluno">Recursos que facilitam o aprendizado</label>
+                <textarea id="recursosAluno" rows="2" placeholder="Ex.: apoio visual, áudio, instruções curtas, tempo adicional"></textarea></div>
+                <div class="col-2 botoes-linha">
+                    <button class="btn" type="submit" id="btnSalvarAluno">Cadastrar aluno</button>
+                    <button class="btn-outline" type="button" id="btnCancelarAluno" hidden>Cancelar edição</button>
                 </div>
             </form>
         </section>
 
         <section class="dashboard-card">
-            <div class="card-header"><h2>Meus alunos</h2></div>
+            <div class="card-header"><h2>Alunos cadastrados <small id="contagemAlunos"></small></h2>
+                <label for="buscaAluno" class="sr-only">Buscar aluno</label>
+                <input type="search" id="buscaAluno" class="busca" placeholder="🔎 Buscar por nome ou turma">
+            </div>
             <div id="listaAlunos"></div>
         </section>
-
     </main>
 
 </div>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

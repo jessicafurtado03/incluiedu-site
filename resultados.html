@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Resultados">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
@@ -13,13 +13,16 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="resultados">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
-    <a class="btn" href="dashboard-professor.html">Dashboard</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
 </header>
 
 <div class="dashboard">
@@ -32,62 +35,59 @@
         <a class="ativo" aria-current="page" href="resultados.html">📊 Resultados</a>
         <a href="materias.html">📚 Matérias</a>
         <a href="conteudos.html">💡 Conteúdos</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
     </aside>
 
     <main class="dashboard-content" id="conteudo">
-
         <div class="dashboard-title">
             <div>
                 <span>ACOMPANHAMENTO</span>
                 <h1>Resultados</h1>
-                <p>Registre e acompanhe o desempenho dos alunos.</p>
+                <p>Registre como o aluno realizou cada atividade e acompanhe a evolução.</p>
             </div>
+            
         </div>
 
-        <section class="dashboard-card">
-            <h2>Resumo</h2>
-            <div id="resumoResultados"></div>
-        </section>
-
-        <section class="dashboard-card">
-            <h2>Registrar resultado</h2>
-            <form id="formResultado" class="form-grid">
-                <div>
-                    <label for="resultadoAluno">Aluno</label>
-                    <select id="resultadoAluno" required></select>
-                </div>
-                <div>
-                    <label for="resultadoAtividade">Atividade</label>
-                    <select id="resultadoAtividade" required></select>
-                </div>
-                <div class="form-full">
-                    <label for="resultadoNivel">Resultado</label>
+        <div class="dashboard-grid">
+            <section class="dashboard-card">
+                <h2>Registrar resultado</h2>
+                <form id="formResultado">
+                    <input type="hidden" id="resultadoId">
+                    <label for="resultadoAluno">Aluno</label><select id="resultadoAluno" required></select>
+                    <label for="resultadoAtividade">Atividade</label><select id="resultadoAtividade" required></select>
+                    <label for="resultadoNivel">Como foi?</label>
                     <select id="resultadoNivel">
                         <option value="independente">🟢 Concluiu sozinho</option>
                         <option value="auxilio">🟡 Concluiu com auxílio</option>
                         <option value="nao-concluiu">🔴 Não conseguiu concluir</option>
                     </select>
-                </div>
-                <div class="form-full">
                     <label for="resultadoObservacao">Observação</label>
-                    <textarea id="resultadoObservacao" rows="5" placeholder="Registre suas observações: o que ajudou, o que pode melhorar..."></textarea>
-                </div>
-                <div class="form-full">
-                    <button class="btn" type="submit">Salvar resultado</button>
-                </div>
-            </form>
-        </section>
+                    <textarea id="resultadoObservacao" rows="3" placeholder="O que funcionou? O que ajustar na próxima?"></textarea>
+                    <div class="botoes-linha">
+                        <button class="btn" type="submit" id="btnSalvarResultado">Salvar resultado</button>
+                        <button class="btn-outline" type="button" id="btnCancelarResultado" hidden>Cancelar edição</button>
+                    </div>
+                </form>
+            </section>
+            <section class="dashboard-card">
+                <h2>Resumo</h2>
+                <div id="resumoResultados"></div>
+            </section>
+        </div>
 
         <section class="dashboard-card">
             <h2>Histórico</h2>
             <div id="listaResultados"></div>
         </section>
-
     </main>
 
 </div>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Área do professor do IncluiEdu: alunos, atividades, adaptações e resultados.">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Professor">
     <meta property="og:description" content="Área do professor do IncluiEdu: alunos, atividades, adaptações e resultados.">
     <meta property="og:type" content="website">
@@ -13,7 +13,7 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body data-vlibras>
+<body data-vlibras data-pagina="">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
@@ -47,8 +47,8 @@
         <h1>Simplifique o planejamento. <strong>Potencialize a inclusão.</strong></h1>
         <p>Conheça seus alunos, adapte atividades, registre resultados e acompanhe a evolução pedagógica.</p>
         <div class="hero-botoes">
-            <a class="btn" href="login.html">Acessar minha área</a>
-            <button class="btn-outline" type="button" onclick="entrarDemo('professor')">▶ Entrar na demonstração</button>
+            <a class="btn" href="cadastro.html">Criar conta de professor</a>
+            <a class="btn-outline" href="login.html">Entrar</a>
         </div>
     </div>
     <div class="hero-foto">
@@ -68,7 +68,7 @@
         <article><div aria-hidden="true">📝</div><h3>Atividades</h3><p>Crie e organize atividades por disciplina.</p><a class="btn-small" href="atividades.html">Acessar</a></article>
         <article><div aria-hidden="true">🧩</div><h3>Adaptar atividade</h3><p>Receba sugestões e crie versões adaptadas.</p><a class="btn-small" href="adaptar-atividade.html">Acessar</a></article>
         <article><div aria-hidden="true">📊</div><h3>Resultados</h3><p>Registre e acompanhe o desempenho.</p><a class="btn-small" href="resultados.html">Acessar</a></article>
-        <article><div aria-hidden="true">🧠</div><h3>Memória pedagógica</h3><p>Consulte as estratégias já utilizadas com cada aluno.</p><a class="btn-small" href="aluno-perfil.html?id=101">Consultar</a></article>
+        <article><div aria-hidden="true">🧠</div><h3>Memória pedagógica</h3><p>Consulte as estratégias já utilizadas com cada aluno.</p><a class="btn-small" href="alunos.html">Consultar</a></article>
     </div>
 </section>
 
@@ -100,7 +100,7 @@
         <div class="dica-card" style="--cor:#14b8a6"><div class="icone">👂</div><h3>Ouça o aluno</h3><p>O próprio estudante e a família sabem o que ajuda. Registre isso no perfil.</p></div>
         <div class="dica-card" style="--cor:#d97706"><div class="icone">🪜</div><h3>Uma coisa por vez</h3><p>Enunciados curtos e etapas numeradas reduzem a sobrecarga.</p></div>
         <div class="dica-card" style="--cor:#16a34a"><div class="icone">🖼️</div><h3>Mostre, não só diga</h3><p>Imagens, esquemas e material concreto ajudam a turma inteira.</p></div>
-        <div class="dica-card" style="--cor:#dc2626"><div class="icone">🗣️</div><h3>Varie a resposta</h3><p>Oral, desenho, marcação, digital: o que importa é demonstrar o que aprendeu.</p></div>
+        <div class="dica-card" style="--cor:#dc2626"><div class="icone">🗣️</div><h3>Varie a resposta</h3><p>Oral, desenho, marcação, digital: o que importa é mostrar o que aprendeu.</p></div>
         <div class="dica-card" style="--cor:#7c3aed"><div class="icone">🤝</div><h3>Trabalhe em rede</h3><p>Compartilhe o que funcionou com o AEE, a coordenação e os outros professores.</p></div>
     </div>
 </section>
@@ -146,7 +146,11 @@
     </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

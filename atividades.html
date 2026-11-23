@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
+    <meta name="theme-color" content="#5b54e8">
     <meta property="og:title" content="IncluiEdu | Atividades">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
@@ -13,13 +13,16 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="atividades">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
-    <a class="btn" href="nova-atividade.html">+ Nova atividade</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
 </header>
 
 <div class="dashboard">
@@ -32,36 +35,37 @@
         <a href="resultados.html">📊 Resultados</a>
         <a href="materias.html">📚 Matérias</a>
         <a href="conteudos.html">💡 Conteúdos</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
     </aside>
 
     <main class="dashboard-content" id="conteudo">
-
-        <div class="demo-barra">
-            <p>🧪 <strong>Modo demonstração:</strong> os dados ficam salvos só neste navegador.</p>
-            <div class="botoes-linha">
-                <button class="btn-mini" type="button" onclick="restaurarDemonstracao()">↻ Carregar dados de exemplo</button>
-                <button class="btn-mini" type="button" onclick="limparDados()">🗑 Limpar dados</button>
-            </div>
-        </div>
-
         <div class="dashboard-title">
             <div>
-                <span>PLANEJAMENTO</span>
-                <h1>Minhas atividades</h1>
-                <p>Cadastre a atividade original e gere versões adaptadas.</p>
+                <span>BANCO DE ATIVIDADES</span>
+                <h1>Atividades</h1>
+                <p>Todas as suas atividades. Edite, exclua ou adapte para um aluno.</p>
             </div>
-            <a class="btn" href="nova-atividade.html">+ Criar atividade</a>
+            <a class="btn" href="nova-atividade.html">+ Nova atividade</a>
         </div>
 
         <section class="dashboard-card">
+            <div class="filtros">
+                <label for="filtroMateria" class="sr-only">Filtrar por matéria</label>
+                <select id="filtroMateria"></select>
+                <label for="buscaAtividade" class="sr-only">Buscar atividade</label>
+                <input type="search" id="buscaAtividade" class="busca" placeholder="🔎 Buscar atividade">
+            </div>
             <div id="listaAtividades"></div>
         </section>
-
     </main>
 
 </div>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

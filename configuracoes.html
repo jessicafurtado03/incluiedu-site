@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b54e8">
+    <meta property="og:title" content="IncluiEdu | Configurações">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Configurações</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-pagina="configuracoes">
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
+</header>
+
+<div class="dashboard">
+
+    <aside class="sidebar" aria-label="Menu do professor">
+        <a href="dashboard-professor.html">🏠 Dashboard</a>
+        <a href="alunos.html">👨‍🎓 Alunos</a>
+        <a href="atividades.html">📝 Atividades</a>
+        <a href="adaptar-atividade.html">🧩 Adaptações</a>
+        <a href="resultados.html">📊 Resultados</a>
+        <a href="materias.html">📚 Matérias</a>
+        <a href="conteudos.html">💡 Conteúdos</a>
+        <a class="ativo" aria-current="page" href="configuracoes.html">⚙️ Configurações</a>
+    </aside>
+
+    <main class="dashboard-content" id="conteudo">
+        <div class="dashboard-title">
+            <div>
+                <span>SUA CONTA</span>
+                <h1>Configurações</h1>
+                <p>Perfil, senha, backup dos dados e exemplos.</p>
+            </div>
+            
+        </div>
+
+        <div class="dashboard-grid">
+            <section class="dashboard-card">
+                <h2>👤 Perfil</h2>
+                <form id="formPerfil">
+                    <label for="cfgNome">Nome</label><input type="text" id="cfgNome" required>
+                    <label for="cfgEmail">E-mail</label><input type="email" id="cfgEmail" required>
+                    <button class="btn" type="submit">Salvar</button>
+                </form>
+                <p id="msgPerfil" class="mensagem" role="status"></p>
+            </section>
+            <section class="dashboard-card">
+                <h2>🔒 Alterar senha</h2>
+                <form id="formSenha">
+                    <label for="senhaAtual">Senha atual</label><input type="password" id="senhaAtual" required autocomplete="current-password">
+                    <label for="senhaNova">Nova senha</label><input type="password" id="senhaNova" required minlength="6" autocomplete="new-password">
+                    <button class="btn" type="submit">Alterar senha</button>
+                </form>
+                <p id="msgSenha" class="mensagem" role="status"></p>
+            </section>
+        </div>
+
+        <section class="dashboard-card">
+            <h2>💾 Banco de dados e backup</h2>
+            <p>O IncluiEdu usa um banco de dados <strong>IndexedDB</strong> dentro do seu navegador. <span id="infoBanco"></span>
+               Os dados não saem deste dispositivo: faça backups regulares e use o arquivo para levar seus dados para outro computador ou navegador.</p>
+            <div class="botoes-linha">
+                <button class="btn" type="button" id="btnExportar">⬇️ Exportar backup (JSON)</button>
+                <label class="btn-outline botao-arquivo" for="arquivoImportar">⬆️ Importar backup</label>
+                <input type="file" id="arquivoImportar" accept="application/json,.json" class="sr-only">
+            </div>
+            <p class="dica">Importar substitui os dados atuais deste navegador pelos do arquivo.</p>
+        </section>
+
+        <div class="dashboard-grid">
+            <section class="dashboard-card">
+                <h2>🌱 Exemplos</h2>
+                <p>Adicione de novo os 5 alunos e 7 atividades de exemplo à sua conta.</p>
+                <button class="btn-outline" type="button" id="btnRestaurarExemplos">Adicionar exemplos</button>
+            </section>
+            <section class="dashboard-card zona-perigo">
+                <h2>⚠️ Excluir conta</h2>
+                <p>Exclui sua conta e todos os seus alunos, atividades, adaptações, resultados e acessos de alunos.</p>
+                <button class="btn-outline perigo" type="button" id="btnExcluirConta">Excluir minha conta</button>
+            </section>
+        </div>
+    </main>
+
+</div>
+
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
+
+</body>
+</html>

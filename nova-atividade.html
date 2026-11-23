@@ -4,64 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
-    <meta property="og:title" content="IncluiEdu | Nova atividade">
+    <meta name="theme-color" content="#5b54e8">
+    <meta property="og:title" content="IncluiEdu | Atividade">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
-    <title>IncluiEdu | Nova atividade</title>
+    <title>IncluiEdu | Atividade</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="novaAtividade">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
-    <a href="atividades.html">← Voltar</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
 </header>
 
-<main class="form-page" id="conteudo">
-    <section class="dashboard-card">
-        <span>NOVA ATIVIDADE</span>
-        <h1>Criar atividade</h1>
-        <p>Cadastre a atividade original antes de realizar adaptações.</p>
+<div class="dashboard">
 
-        <form id="formAtividade" class="form-grid">
-            <div class="form-full">
-                <label for="tituloAtividade">Título da atividade</label>
-                <input type="text" id="tituloAtividade" placeholder="Ex.: Frações com pizza" required>
-            </div>
-            <div>
-                <label for="disciplinaAtividade">Disciplina</label>
-                <input type="text" id="disciplinaAtividade" placeholder="Matemática" required list="listaDisciplinas">
-                <datalist id="listaDisciplinas">
-                    <option value="Matemática"><option value="Língua Portuguesa"><option value="Ciências">
-                    <option value="História"><option value="Geografia"><option value="Arte"><option value="Inglês">
-                </datalist>
-            </div>
-            <div>
-                <label for="turmaAtividade">Ano/Turma</label>
-                <input type="text" id="turmaAtividade" placeholder="5º Ano A" required>
-            </div>
-            <div class="form-full">
-                <label for="objetivoAtividade">Objetivo da atividade</label>
-                <textarea id="objetivoAtividade" rows="3" placeholder="O que o aluno deverá aprender?"></textarea>
-            </div>
-            <div class="form-full">
-                <label for="conteudoAtividade">Conteúdo da atividade</label>
-                <textarea id="conteudoAtividade" rows="8" placeholder="Digite ou cole aqui a atividade original..." required></textarea>
-                <p class="dica">Dica: escreva cada pergunta como uma frase. O IncluiEdu transforma cada frase em uma etapa.</p>
-            </div>
-            <div class="form-full">
-                <button class="btn" type="submit">Salvar atividade</button>
-            </div>
-        </form>
-    </section>
-</main>
+    <aside class="sidebar" aria-label="Menu do professor">
+        <a href="dashboard-professor.html">🏠 Dashboard</a>
+        <a href="alunos.html">👨‍🎓 Alunos</a>
+        <a class="ativo" aria-current="page" href="atividades.html">📝 Atividades</a>
+        <a href="adaptar-atividade.html">🧩 Adaptações</a>
+        <a href="resultados.html">📊 Resultados</a>
+        <a href="materias.html">📚 Matérias</a>
+        <a href="conteudos.html">💡 Conteúdos</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
+    </aside>
 
-<script src="script.js"></script>
+    <main class="dashboard-content" id="conteudo">
+        <div class="dashboard-title"><div><span>ATIVIDADE</span><h1 id="tituloPagina">Nova atividade</h1>
+            <p>Escreva a atividade como faria para a turma. Depois o IncluiEdu ajuda a adaptá-la.</p></div></div>
+
+        <section class="dashboard-card">
+            <form id="formAtividade" class="form-grid">
+                <div class="col-2"><label for="tituloAtividade">Título</label><input type="text" id="tituloAtividade" required placeholder="Ex.: Frações com pizza"></div>
+                <div><label for="materiaAtividade">Matéria</label><select id="materiaAtividade" required></select></div>
+                <div><label for="turmaAtividade">Turma</label><input type="text" id="turmaAtividade" required placeholder="Ex.: 5º Ano A"></div>
+                <div class="col-2"><label for="objetivoAtividade">Objetivo de aprendizagem</label><input type="text" id="objetivoAtividade" placeholder="Ex.: Compreender frações como partes de um inteiro"></div>
+                <div class="col-2"><label for="conteudoAtividade">Enunciado da atividade</label>
+                <textarea id="conteudoAtividade" rows="7" required placeholder="Escreva o enunciado completo. Cada frase vira uma etapa na adaptação."></textarea></div>
+                <label class="check check-inline col-2"><input type="checkbox" id="irAdaptar" checked><span>Depois de salvar, ir para a adaptação</span></label>
+                <div class="col-2 botoes-linha">
+                    <button class="btn" type="submit" id="btnSalvarAtividade">Salvar atividade</button>
+                    <a class="btn-outline" href="atividades.html">Cancelar</a>
+                </div>
+            </form>
+            <p class="dica">💡 Quer um ponto de partida? Veja as <a href="materias.html">aulas modelo por matéria</a> e use uma com um clique.</p>
+        </section>
+    </main>
+
+</div>
+
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>

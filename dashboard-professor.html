@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
-    <meta name="theme-color" content="#5b5bd6">
-    <meta property="og:title" content="IncluiEdu | Dashboard">
+    <meta name="theme-color" content="#5b54e8">
+    <meta property="og:title" content="IncluiEdu | Painel do professor">
     <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
-    <title>IncluiEdu | Dashboard</title>
+    <title>IncluiEdu | Painel do professor</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-pagina="dashboardProfessor">
 
 <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="dashboard-header">
     <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
     <div class="usuario-menu">
-        <span id="nomeProfessor">Professor</span>
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
         <button type="button" onclick="sair()">Sair</button>
     </div>
 </header>
@@ -35,72 +35,74 @@
         <a href="resultados.html">📊 Resultados</a>
         <a href="materias.html">📚 Matérias</a>
         <a href="conteudos.html">💡 Conteúdos</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
     </aside>
 
     <main class="dashboard-content" id="conteudo">
 
-        <div class="demo-barra">
-            <p>🧪 <strong>Modo demonstração:</strong> os dados ficam salvos só neste navegador.</p>
-            <div class="botoes-linha">
-                <button class="btn-mini" type="button" onclick="restaurarDemonstracao()">↻ Carregar dados de exemplo</button>
-                <button class="btn-mini" type="button" onclick="limparDados()">🗑 Limpar dados</button>
-            </div>
+        <div class="aviso-card boas-vindas" id="boasVindas" hidden>
+            <span aria-hidden="true">🎉</span>
+            <div><strong>Conta criada com sucesso!</strong>
+            <p>Comece por aqui: 1) confira os alunos, 2) crie ou escolha uma atividade, 3) gere a adaptação com a prévia visual, 4) crie o acesso do aluno no perfil dele.</p></div>
         </div>
 
         <div class="dashboard-title">
             <div>
                 <span>VISÃO GERAL</span>
-                <h1 id="saudacaoProfessor">Olá, professor! 👋</h1>
+                <h1>Olá, <span data-primeiro-nome>professor</span>! 👋</h1>
                 <p>Veja o que está acontecendo com suas turmas.</p>
             </div>
             <a class="btn" href="nova-atividade.html">+ Nova atividade</a>
         </div>
 
-        <div class="stats">
-            <a class="stat-card" href="alunos.html"><span aria-hidden="true">👨‍🎓</span><div><small>Alunos</small><strong id="totalAlunos">0</strong></div></a>
-            <a class="stat-card" href="atividades.html"><span aria-hidden="true">📝</span><div><small>Atividades</small><strong id="totalAtividades">0</strong></div></a>
-            <a class="stat-card" href="adaptar-atividade.html"><span aria-hidden="true">🧩</span><div><small>Adaptações</small><strong id="totalAdaptacoes">0</strong></div></a>
-            <a class="stat-card" href="resultados.html"><span aria-hidden="true">📊</span><div><small>Resultados</small><strong id="totalResultados">0</strong></div></a>
+        <div class="aviso-card" id="avisoExemplos" hidden>
+            <span aria-hidden="true">🌱</span>
+            <div><strong>Sua conta tem registros de exemplo.</strong>
+            <p>Eles têm a etiqueta <span class="selo-exemplo">exemplo</span>. Edite à vontade ou exclua quando cadastrar seus alunos.</p></div>
+            <button class="btn-outline" type="button" id="btnExcluirExemplos">Excluir exemplos</button>
         </div>
+
+        <div class="stats">
+            <a class="stat-card" href="alunos.html" style="--cor:#5b54e8"><span aria-hidden="true">👨‍🎓</span><div><small>Alunos</small><strong id="totalAlunos">0</strong></div></a>
+            <a class="stat-card" href="atividades.html" style="--cor:#18b6a4"><span aria-hidden="true">📝</span><div><small>Atividades</small><strong id="totalAtividades">0</strong></div></a>
+            <a class="stat-card" href="adaptar-atividade.html" style="--cor:#ff8a65"><span aria-hidden="true">🧩</span><div><small>Adaptações</small><strong id="totalAdaptacoes">0</strong></div></a>
+            <a class="stat-card" href="resultados.html" style="--cor:#f0a500"><span aria-hidden="true">📊</span><div><small>Resultados</small><strong id="totalResultados">0</strong></div></a>
+        </div>
+
+        <section class="dashboard-card fluxo-card">
+            <h2>Seu fluxo em 4 passos</h2>
+            <ol class="fluxo">
+                <li class="fluxo-passo"><a href="alunos.html"><span>1</span><strong>Cadastre o aluno</strong><small>Perfil e recursos</small></a></li>
+                <li class="fluxo-passo"><a href="nova-atividade.html"><span>2</span><strong>Crie a atividade</strong><small>Ou use uma aula modelo</small></a></li>
+                <li class="fluxo-passo"><a href="adaptar-atividade.html"><span>3</span><strong>Adapte e veja a prévia</strong><small>Folha ilustrada</small></a></li>
+                <li class="fluxo-passo"><a href="resultados.html"><span>4</span><strong>Registre o resultado</strong><small>Memória pedagógica</small></a></li>
+            </ol>
+        </section>
 
         <div class="dashboard-grid">
             <section class="dashboard-card">
-                <div class="card-header"><h2>Ações rápidas</h2></div>
-                <div class="quick-actions">
-                    <a href="alunos.html">👨‍🎓 <span>Cadastrar aluno</span></a>
-                    <a href="nova-atividade.html">📝 <span>Criar atividade</span></a>
-                    <a href="adaptar-atividade.html">🧩 <span>Adaptar atividade</span></a>
-                    <a href="resultados.html">📊 <span>Registrar resultado</span></a>
-                </div>
-            </section>
-
-            <section class="dashboard-card">
                 <div class="card-header"><h2>Últimas atividades</h2><a href="atividades.html">Ver todas</a></div>
-                <div id="ultimasAtividades"><p class="empty">Nenhuma atividade cadastrada.</p></div>
+                <div id="ultimasAtividades"><p class="empty">Carregando…</p></div>
+            </section>
+            <section class="dashboard-card">
+                <div class="card-header"><h2>Desempenho da turma</h2><a href="resultados.html">Detalhes</a></div>
+                <div id="resumoResultados"></div>
             </section>
         </div>
 
         <section class="dashboard-card">
-            <div class="card-header"><h2>Desempenho da turma</h2><a href="resultados.html">Detalhes</a></div>
-            <div id="resumoResultados"></div>
-            <div id="listaResultados" hidden></div>
-        </section>
-
-        <section class="dashboard-card">
-            <div class="card-header"><h2>📚 Matérias com exemplos prontos</h2><a href="materias.html">Ver todas</a></div>
+            <div class="card-header"><h2>📚 Aulas modelo por matéria</h2><a href="materias.html">Ver todas</a></div>
             <nav class="materias-aluno" aria-label="Matérias"><a href="materia-portugues.html" style="--cor:#d97706"><span aria-hidden="true">📖</span>Língua Portuguesa</a><a href="materia-matematica.html" style="--cor:#5b5bd6"><span aria-hidden="true">➗</span>Matemática</a><a href="materia-ciencias.html" style="--cor:#14b8a6"><span aria-hidden="true">🔬</span>Ciências</a><a href="materia-historia.html" style="--cor:#dc2626"><span aria-hidden="true">🏛️</span>História</a><a href="materia-geografia.html" style="--cor:#16a34a"><span aria-hidden="true">🗺️</span>Geografia</a><a href="materia-ingles.html" style="--cor:#0ea5e9"><span aria-hidden="true">🌎</span>Inglês</a><a href="materia-artes.html" style="--cor:#7c3aed"><span aria-hidden="true">🎨</span>Artes</a></nav>
         </section>
-
-        <section class="dashboard-card">
-            <div class="card-header"><h2>💡 Dica do dia</h2><a href="conteudos.html#dua">Ler mais</a></div>
-            <p>Planeje pensando na diversidade desde o início (DUA): ofereça o conteúdo em mais de um formato, como texto + imagem + áudio. O que é essencial para alguns é bom para todos.</p>
-        </section>
-
     </main>
 
 </div>
 
-<script src="script.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/visual.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app.js"></script>
 
 </body>
 </html>
