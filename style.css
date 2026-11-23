@@ -1127,12 +1127,12 @@ th { background: var(--soft); color: var(--dark); }
 .barra-amarelo { background: #eab308; }
 .barra-vermelho { background: var(--danger); }
 
-.demo-barra {
+.aviso-barra {
     display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between;
     background: var(--soft); border: 1px dashed #c7c3f5; border-radius: 14px; padding: 14px 18px; margin-bottom: 22px;
 }
-.demo-barra p { color: var(--text); font-size: 14.5px; }
-.demo-barra .botoes-linha { margin: 0; }
+.aviso-barra p { color: var(--text); font-size: 14.5px; }
+.aviso-barra .botoes-linha { margin: 0; }
 .btn-mini {
     padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 14px; background: #fff;
     border: 1px solid var(--border); color: var(--dark);
@@ -1315,7 +1315,7 @@ body.sem-movimento *, body.sem-movimento *::before, body.sem-movimento *::after 
 }
 
 @media print {
-    header, footer, .a11y, .sidebar, .botoes-etapa, .demo-barra, [vw] { display: none !important; }
+    header, footer, .a11y, .sidebar, .botoes-etapa, .aviso-barra, [vw] { display: none !important; }
     body { background: #fff; }
 }
 
