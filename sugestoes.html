@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta name="theme-color" content="#5b54e8">
+    <meta property="og:title" content="IncluiEdu | Sugestões dos alunos">
+    <meta property="og:description" content="IncluiEdu - Assistente de Inclusão Pedagógica">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/professora-ajudando-aluno.jpg">
+    <title>IncluiEdu | Sugestões dos alunos</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css?v=20261123d">
+</head>
+<body data-pagina="sugestoesProfessor">
+
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="IncluiEdu - página inicial"><span>Inclui</span>Edu</a>
+    <div class="usuario-menu">
+        <a class="usuario-chip" href="configuracoes.html" title="Configurações"><span class="usuario-avatar" aria-hidden="true">👩‍🏫</span><span data-nome-usuario>Professor</span></a>
+        <button type="button" onclick="sair()">Sair</button>
+    </div>
+</header>
+
+<div class="dashboard">
+
+    <aside class="sidebar" aria-label="Menu do professor">
+        <a href="dashboard-professor.html">🏠 Dashboard</a>
+        <a href="alunos.html">👨‍🎓 Alunos</a>
+        <a href="atividades.html">📝 Atividades</a>
+        <a href="adaptar-atividade.html">🧩 Adaptações</a>
+        <a href="resultados.html">📊 Resultados</a>
+        <a href="materias.html">📚 Matérias</a>
+        <a href="conteudos.html">💡 Conteúdos</a>
+        <a class="ativo" aria-current="page" href="sugestoes.html">💬 Sugestões</a>
+        <a href="configuracoes.html">⚙️ Configurações</a>
+    </aside>
+
+    <main class="dashboard-content" id="conteudo">
+        <div class="dashboard-title">
+            <div>
+                <span>ESCUTA ATIVA</span>
+                <h1>Sugestões dos alunos</h1>
+                <p>O que alunos e visitantes pediram para aprender melhor. Os pedidos ficam salvos neste dispositivo.</p>
+            </div>
+            
+        </div>
+
+        <section class="dashboard-card">
+            <div class="filtros">
+                <label for="filtroSugOpcao" class="sr-only">Filtrar por pedido</label>
+                <select id="filtroSugOpcao"><option value="">Todos os pedidos</option></select>
+                <label for="filtroSugQuem" class="sr-only">Filtrar por quem enviou</label>
+                <select id="filtroSugQuem"><option value="">Todos</option><option value="meus">Meus alunos</option><option value="aluno">Qualquer aluno</option><option value="visitante">Visitantes</option></select>
+                <label for="filtroSugPagina" class="sr-only">Filtrar por página</label>
+                <select id="filtroSugPagina"><option value="">Todas as páginas</option></select>
+            </div>
+            <div id="resumoSugestoes" class="sug-resumo"></div>
+            <div id="listaSugestoes"></div>
+        </section>
+    </main>
+
+</div>
+
+<script src="assets/js/db.js?v=20261123d"></script>
+<script src="assets/js/dados.js?v=20261123d"></script>
+<script src="assets/js/interativo.js?v=20261123d"></script>
+<script src="assets/js/visual.js?v=20261123d"></script>
+<script src="assets/js/ui.js?v=20261123d"></script>
+<script src="assets/js/app.js?v=20261123d"></script>
+
+</body>
+</html>

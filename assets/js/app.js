@@ -924,6 +924,7 @@ Paginas.atividadeAluno = async () => {
     const cor = corMateria(atv);
     let atual = 0;
     const respostas = Object.assign({}, adaptacao.respostas || {});
+    let salvarT = null;
 
     box.innerHTML = `
         <section class="dashboard-card atividade-topo" style="--cor:${cor}">
@@ -943,10 +944,18 @@ Paginas.atividadeAluno = async () => {
                 <div>
                     <p class="etapa-contador" id="contadorEtapa"></p>
                     <p class="etapa-texto" id="textoEtapa"></p>
-                    <label for="respostaEtapa" class="sr-only">Sua resposta</label>
-                    <textarea id="respostaEtapa" rows="3" placeholder="Escreva sua resposta aqui (ou responda falando com o professor)"></textarea>
+                    <div id="caixaTexto">
+                        <label for="respostaEtapa" class="sr-only">Sua resposta</label>
+                        <textarea id="respostaEtapa" rows="3" placeholder="Escreva sua resposta aqui (ou responda falando com o professor)"></textarea>
+                    </div>
                 </div>
             </div>
+            <div id="campoEtapa" class="campo-etapa int-bloco" hidden></div>
+            <div class="int-acoes" id="acoesEtapa" hidden>
+                <button class="btn" type="button" id="btnConferirEtapa">✅ Conferir</button>
+                <button class="btn-outline" type="button" id="btnDeNovoEtapa" hidden>🔄 Tentar de novo</button>
+            </div>
+            <p class="int-retorno" id="retornoEtapa" aria-live="polite" hidden></p>
         </section>
         <section class="dashboard-card botoes-etapa">
             <button class="btn-outline" type="button" id="btnOuvir">🔊 Ouvir</button>
@@ -962,6 +971,37 @@ Paginas.atividadeAluno = async () => {
     const campo = $("#respostaEtapa");
     const svgFolha = () => Visual.folha({ titulo: atv.titulo, materia: nomeMateria(atv), turma: atv.turma, aluno: App.usuario.nome, texto: adaptacao.texto, cor, emoji: emojiMateria(atv) });
 
+    const specs = Interativo.deEtapas(lista).map(x => x.w);
+    const acertos = Object.assign({}, adaptacao.acertos || {});
+    let ctrl = null;
+    function salvarDepois() {
+        clearTimeout(salvarT);
+        salvarT = setTimeout(async () => { adaptacao = Object.assign({}, adaptacao, { respostas, acertos }); await DB.salvar("adaptacoes", adaptacao); }, 400);
+    }
+    function montarCampo() {
+        const w = specs[atual], area = $("#campoEtapa");
+        area.innerHTML = ""; area.className = "campo-etapa int-bloco";
+        $("#retornoEtapa").hidden = true; $("#btnDeNovoEtapa").hidden = true;
+        ctrl = w ? Interativo.campo(w, area) : null;
+        const temCampo = !!w;
+        area.hidden = !temCampo;
+        $("#acoesEtapa").hidden = !ctrl;
+        $("#caixaTexto").hidden = temCampo;
+        if (ctrl && respostas["w" + atual] !== undefined) ctrl.set(respostas["w" + atual]);
+    }
+    $("#campoEtapa").addEventListener("int-mudou", () => { if (!ctrl) return; respostas["w" + atual] = ctrl.valor(); salvarDepois(); });
+    $("#btnConferirEtapa").addEventListener("click", () => {
+        if (!ctrl) return;
+        const ret = $("#retornoEtapa"); ret.hidden = false;
+        if (!ctrl.respondido()) { ret.textContent = "👉 Responda primeiro. Sem pressa!"; ret.className = "int-retorno"; return; }
+        const r = ctrl.certo();
+        acertos[atual] = r;
+        if (r === null) { ret.textContent = "💛 Resposta registrada. Muito bem!"; ret.className = "int-retorno ok"; }
+        else if (r) { ret.textContent = "⭐ Isso mesmo! " + (ctrl.w.explica || ""); ret.className = "int-retorno ok"; falar("Isso mesmo!"); }
+        else { ret.textContent = "💡 Quase! Vamos olhar de novo: " + (ctrl.w.explica || "a resposta é " + ctrl.resposta() + "."); ret.className = "int-retorno quase"; $("#btnDeNovoEtapa").hidden = false; if (ctrl.marcar) ctrl.marcar(); }
+        salvarDepois();
+    });
+    $("#btnDeNovoEtapa").addEventListener("click", () => { delete respostas["w" + atual]; delete acertos[atual]; montarCampo(); salvarDepois(); });
     function mostrar() {
         $("#contadorEtapa").textContent = `Etapa ${atual + 1} de ${lista.length}`;
         $("#textoEtapa").textContent = lista[atual];
@@ -969,24 +1009,23 @@ Paginas.atividadeAluno = async () => {
         $("#btnAnterior").disabled = atual === 0;
         $("#btnProxima").textContent = atual === lista.length - 1 ? "✅ Concluir atividade" : "Próxima etapa →";
         campo.value = respostas[atual] || "";
+        montarCampo();
         document.querySelectorAll("#trilha span").forEach(s => {
             const i = Number(s.dataset.i);
             s.className = i < atual ? "feito" : i === atual ? "atual" : "";
         });
     }
-    let salvarT = null;
-    campo.addEventListener("input", () => {
-        respostas[atual] = campo.value;
-        clearTimeout(salvarT);
-        salvarT = setTimeout(async () => { adaptacao = Object.assign({}, adaptacao, { respostas }); await DB.salvar("adaptacoes", adaptacao); }, 400);
-    });
+    campo.addEventListener("input", () => { respostas[atual] = campo.value; salvarDepois(); });
     $("#btnOuvir").addEventListener("click", () => falar(lista[atual]));
-    $("#btnAnterior").addEventListener("click", () => { if (atual > 0) { atual--; mostrar(); } });
+    const irParaEtapa = () => { const c = document.querySelector(".etapa-card"); if (c) c.scrollIntoView({ block: "start", behavior: document.body.classList.contains("sem-movimento") ? "auto" : "smooth" }); };
+    $("#btnAnterior").addEventListener("click", () => { if (atual > 0) { atual--; mostrar(); irParaEtapa(); } });
     $("#btnProxima").addEventListener("click", async () => {
-        if (atual < lista.length - 1) { atual++; mostrar(); return; }
-        const preenchidas = Object.values(respostas).filter(v => String(v).trim()).length;
-        const estrelas = preenchidas >= lista.length ? 3 : preenchidas >= Math.ceil(lista.length / 2) ? 2 : 1;
-        adaptacao = Object.assign({}, adaptacao, { respostas, concluida: true, estrelas: Math.max(estrelas, adaptacao.estrelas || 0), concluidaEm: new Date().toISOString() });
+        if (atual < lista.length - 1) { atual++; mostrar(); irParaEtapa(); return; }
+        const feitas = lista.filter((_, i) => specs[i] ? (respostas["w" + i] !== undefined && respostas["w" + i] !== "" && !(Array.isArray(respostas["w" + i]) && !respostas["w" + i].some(v => v !== null))) || specs[i].t === "pizzaVer" : String(respostas[i] || "").trim()).length;
+        const erros = Object.values(acertos).filter(v => v === false).length;
+        let estrelas = feitas >= lista.length ? 3 : feitas >= Math.ceil(lista.length / 2) ? 2 : 1;
+        if (erros && estrelas === 3) estrelas = 2;
+        adaptacao = Object.assign({}, adaptacao, { respostas, acertos, concluida: true, estrelas: Math.max(estrelas, adaptacao.estrelas || 0), concluidaEm: new Date().toISOString() });
         await DB.salvar("adaptacoes", adaptacao);
         celebrar(adaptacao.estrelas);
     });
@@ -1061,6 +1100,130 @@ function mensagem(id, texto, tipo = "") {
 }
 
 
+
+/* =====================================================
+   SUGESTÕES PARA MELHOR ATENDER VOCÊ
+   ===================================================== */
+
+const OPCOES_SUGESTAO = [
+    { id: "letras", icone: "🔍", nome: "Letras maiores", aplicar: { rotulo: "Aumentar as letras agora", fn: p => { p.fonte = Math.min(150, p.fonte + 20); } } },
+    { id: "contraste", icone: "🎨", nome: "Mais contraste ou cores", aplicar: { rotulo: "Ativar alto contraste agora", fn: p => { p.contraste = true; } } },
+    { id: "audio", icone: "🔊", nome: "Mais áudio", aplicar: { rotulo: "Ler esta página em voz alta agora", acao: () => falar((document.querySelector("main") || document.body).innerText.slice(0, 4000)) } },
+    { id: "libras", icone: "🤟", nome: "Libras", aplicar: { rotulo: "Abrir o tradutor de Libras agora", acao: () => { const b = document.querySelector("[vw-access-button]"); if (b) b.click(); else avisar("O tradutor de Libras (VLibras) precisa de internet.", "info"); } } },
+    { id: "animacoes", icone: "🐢", nome: "Menos animações", aplicar: { rotulo: "Desligar as animações agora", fn: p => { p.movimento = true; } } },
+    { id: "imagens", icone: "🖼️", nome: "Mais imagens" },
+    { id: "leitura", icone: "📖", nome: "Texto mais simples", aplicar: { rotulo: "Ativar leitura facilitada agora", fn: p => { p.leitura = true; } } },
+    { id: "outra", icone: "🧩", nome: "Outra ideia" }
+];
+
+function iniciarSugestoes() {
+    const sec = document.querySelector("[data-sugestoes]");
+    if (!sec) return;
+    const temVoz = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    sec.innerHTML = `
+        <div class="sug-card">
+            <div class="sug-topo">
+                <span class="sug-mascote" aria-hidden="true">💬</span>
+                <div>
+                    <h2 id="tituloSugestoes">Sugestões para melhor atender você</h2>
+                    <p>O que deixaria esta página mais fácil para você? Toque em quantas quiser.</p>
+                </div>
+            </div>
+            <form id="formSugestao">
+                <div class="sug-opcoes" role="group" aria-label="Sugestões rápidas">
+                    ${OPCOES_SUGESTAO.map(o => `<button type="button" class="sug-opcao" data-op="${o.id}" aria-pressed="false"><span aria-hidden="true">${o.icone}</span>${esc(o.nome)}</button>`).join("")}
+                </div>
+                <div class="sug-aplicar" id="sugAplicar" hidden></div>
+                <label for="sugTexto" class="sug-rotulo">Quer contar mais? <small>(opcional)</small></label>
+                <div class="sug-texto">
+                    <textarea id="sugTexto" rows="2" placeholder="Escreva aqui${temVoz ? " ou toque no microfone e fale" : ""}"></textarea>
+                    ${temVoz ? `<button type="button" class="int-mic" id="sugMic" aria-label="Falar a sugestão">🎤</button>` : ""}
+                </div>
+                <button class="btn" type="submit">📨 Enviar</button>
+                <p class="mensagem" id="sugMsg" role="status"></p>
+            </form>
+            <div class="sug-obrigado" id="sugObrigado" hidden>
+                <div class="sug-coracoes" aria-hidden="true"><span>💜</span><span>💛</span><span>💚</span></div>
+                <h3>Obrigado! Sua sugestão foi guardada.</h3>
+                <p>Ela ajuda o professor a deixar tudo do seu jeito.</p>
+                <button type="button" class="btn-outline" id="sugOutra">Enviar outra sugestão</button>
+            </div>
+        </div>`;
+    const sel = new Set();
+    const caixaAplicar = sec.querySelector("#sugAplicar");
+    const mostrarAplicar = () => {
+        const ops = OPCOES_SUGESTAO.filter(o => sel.has(o.id) && o.aplicar);
+        caixaAplicar.hidden = !ops.length;
+        caixaAplicar.innerHTML = ops.length ? `<p>✨ Quer ativar agora?</p>${ops.map(o => `<button type="button" class="btn-mini" data-aplicar="${o.id}">${o.icone} ${esc(o.aplicar.rotulo)}</button>`).join("")}` : "";
+    };
+    sec.addEventListener("click", ev => {
+        const b = ev.target.closest(".sug-opcao");
+        if (b) { const id = b.dataset.op; sel.has(id) ? sel.delete(id) : sel.add(id); b.setAttribute("aria-pressed", sel.has(id) ? "true" : "false"); mostrarAplicar(); return; }
+        const a = ev.target.closest("[data-aplicar]");
+        if (a) {
+            const o = OPCOES_SUGESTAO.find(x => x.id === a.dataset.aplicar);
+            if (o.aplicar.fn) alterarPreferencia(o.aplicar.fn);
+            if (o.aplicar.acao) o.aplicar.acao();
+            a.disabled = true; a.textContent = "✔ " + o.aplicar.rotulo.replace(/ agora$/, "") + ": feito!";
+        }
+        if (ev.target.closest("#sugMic")) {
+            const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new R(); rec.lang = "pt-BR";
+            const m = ev.target.closest("#sugMic"); m.classList.add("ouvindo");
+            rec.onresult = r => { const t = sec.querySelector("#sugTexto"); t.value = (t.value ? t.value + " " : "") + r.results[0][0].transcript; };
+            rec.onend = rec.onerror = () => m.classList.remove("ouvindo");
+            try { rec.start(); } catch (e) { m.classList.remove("ouvindo"); }
+        }
+        if (ev.target.closest("#sugOutra")) { sec.querySelector("#sugObrigado").hidden = true; sec.querySelector("#formSugestao").hidden = false; }
+    });
+    sec.querySelector("#formSugestao").addEventListener("submit", async ev => {
+        ev.preventDefault();
+        const texto = sec.querySelector("#sugTexto").value.trim();
+        if (!sel.size && !texto) { mensagem("sugMsg", "Toque em uma opção ou escreva sua ideia. 😊", "erro"); return; }
+        const u = App.usuario;
+        await DB.salvar("sugestoes", {
+            pagina: location.pathname.split("/").pop() || "index.html", tituloPagina: document.title.replace(/^IncluiEdu \| /, ""),
+            usuarioId: u ? u.id : null, nome: u ? u.nome : null, tipo: u ? u.tipo : "visitante", professorId: u && u.tipo === "aluno" ? u.professorId : (u ? u.id : null),
+            opcoes: [...sel], texto, data: new Date().toISOString()
+        });
+        sel.clear(); ev.target.reset(); sec.querySelectorAll(".sug-opcao").forEach(b => b.setAttribute("aria-pressed", "false")); mostrarAplicar(); mensagem("sugMsg", "");
+        ev.target.hidden = true; sec.querySelector("#sugObrigado").hidden = false;
+        sec.querySelector("#sugObrigado").focus?.();
+    });
+}
+
+Paginas.sugestoesProfessor = async () => {
+    if (!exigir("professor")) return;
+    const nomeOp = id => { const o = OPCOES_SUGESTAO.find(x => x.id === id); return o ? o.icone + " " + o.nome : id; };
+    $("#filtroSugOpcao").innerHTML += OPCOES_SUGESTAO.map(o => `<option value="${o.id}">${o.icone} ${esc(o.nome)}</option>`).join("");
+    async function listar() {
+        const todas = (await DB.listar("sugestoes")).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+        const paginas = [...new Set(todas.map(s => s.pagina))].sort();
+        const selPag = $("#filtroSugPagina"), atualPag = selPag.value;
+        selPag.innerHTML = `<option value="">Todas as páginas</option>` + paginas.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join("");
+        selPag.value = atualPag;
+        const op = $("#filtroSugOpcao").value, quem = $("#filtroSugQuem").value, pag = selPag.value;
+        const lista = todas.filter(s => (!op || (s.opcoes || []).includes(op)) && (!pag || s.pagina === pag) &&
+            (!quem || (quem === "meus" ? s.tipo === "aluno" && s.professorId === App.usuario.id : s.tipo === quem)));
+        const cont = {};
+        lista.forEach(s => (s.opcoes || []).forEach(o => { cont[o] = (cont[o] || 0) + 1; }));
+        $("#resumoSugestoes").innerHTML = Object.keys(cont).length ? Object.entries(cont).sort((a, b) => b[1] - a[1]).map(([o, n]) => `<span class="sug-chip-resumo">${nomeOp(o)} <strong>${n}</strong></span>`).join("") : "";
+        $("#listaSugestoes").innerHTML = lista.length ? lista.map(s => `
+            <div class="item-lista sug-item">
+                <div class="item-avatar" aria-hidden="true">${s.tipo === "aluno" ? "🧒" : s.tipo === "professor" ? "👩‍🏫" : "🙂"}</div>
+                <div class="item-info"><strong>${esc(s.nome || "Visitante")}</strong> <small>• ${esc(s.tituloPagina || s.pagina)} • ${new Date(s.data).toLocaleString("pt-BR")}</small>
+                    <p>${(s.opcoes || []).map(o => `<span class="tag">${nomeOp(o)}</span>`).join(" ")}</p>${s.texto ? `<p class="sug-texto-lido">“${esc(s.texto)}”</p>` : ""}</div>
+                <div class="acoes-item"><button class="btn-icone perigo" type="button" data-excluir="${s.id}" aria-label="Excluir sugestão">🗑️</button></div>
+            </div>`).join("") : `<p class="empty">Nenhuma sugestão por aqui ainda. Elas aparecem quando alunos ou visitantes usam a caixa “Sugestões para melhor atender você” no fim das páginas.</p>`;
+    }
+    ["#filtroSugOpcao", "#filtroSugQuem", "#filtroSugPagina"].forEach(s => $(s).addEventListener("change", listar));
+    $("#listaSugestoes").addEventListener("click", async e => {
+        const b = e.target.closest("[data-excluir]");
+        if (b && await confirmar("Excluir esta sugestão?", { titulo: "Excluir sugestão", ok: "Excluir", perigo: true })) { await DB.excluir("sugestoes", Number(b.dataset.excluir)); avisar("Sugestão excluída.", "info"); listar(); }
+    });
+    listar();
+};
+
 /* =====================================================
    INICIALIZAÇÃO
    ===================================================== */
@@ -1074,6 +1237,9 @@ function mensagem(id, texto, tipo = "") {
         App.usuario = await usuarioAtual();
         preencherUsuario();
         ligarModelos();
+        if (App.usuario && App.usuario.tipo === "professor") document.querySelectorAll("[data-modelo], [data-so-professor-logado]").forEach(b => { b.hidden = false; });
+        if (typeof Interativo !== "undefined") Interativo.iniciar();
+        iniciarSugestoes();
         document.querySelectorAll("[data-folha-exemplo]").forEach(el => {
             const ex = DADOS_EXEMPLOS.adaptacoes[0], atv = DADOS_EXEMPLOS.atividades.find(t => t.ref === ex.atividade);
             const mat = App.materias.find(m => m.slug === atv.materia) || {};

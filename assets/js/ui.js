@@ -54,7 +54,8 @@ function confirmar(mensagem, { titulo = "Confirmar", ok = "Confirmar", perigo = 
 function falar(texto) {
     if (!("speechSynthesis" in window)) { avisar("Seu navegador não tem leitura em voz alta.", "erro"); return; }
     window.speechSynthesis.cancel();
-    const fala = new SpeechSynthesisUtterance(String(texto).replace(/[_]{2,}/g, " espaço para resposta "));
+    const limpo = typeof Interativo !== "undefined" ? Interativo.paraFala(texto) : String(texto).replace(/[_]{2,}/g, " espaço para resposta ");
+    const fala = new SpeechSynthesisUtterance(limpo);
     fala.lang = "pt-BR";
     fala.rate = 0.92;
     const voz = window.speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith("pt"));
@@ -112,8 +113,16 @@ function aplicarPreferencias(prefs) {
     if (rotulo) rotulo.textContent = prefs.fonte + "%";
 }
 
+const PREFS_ATUAIS = lerPrefs();
+/* Altera uma preferência de acessibilidade por código (usado pelas sugestões) */
+function alterarPreferencia(fn) {
+    fn(PREFS_ATUAIS);
+    localStorage.setItem("incluiedu_acessibilidade", JSON.stringify(PREFS_ATUAIS));
+    aplicarPreferencias(PREFS_ATUAIS);
+}
+
 (function iniciarAcessibilidade() {
-    const prefs = lerPrefs();
+    const prefs = PREFS_ATUAIS;
     const painel = document.createElement("div");
     painel.className = "a11y";
     painel.innerHTML = `
