@@ -5,7 +5,7 @@
    ===================================================== */
 
 const DB_NOME = "incluiedu";
-const DB_VERSAO = 2;
+const DB_VERSAO = 3;
 
 const TABELAS = {
     usuarios:   { indices: [["email", "email", true], ["tipo", "tipo"], ["professorId", "professorId"]] },
@@ -15,6 +15,8 @@ const TABELAS = {
     resultados: { indices: [["professorId", "professorId"], ["alunoId", "alunoId"]] },
     materias:   { indices: [["slug", "slug", true]] },
     sugestoes:  { indices: [["pagina", "pagina"], ["usuarioId", "usuarioId"]] },
+    pontos:     { indices: [["usuarioId", "usuarioId"]] },
+    tempo:      { chave: "chave", indices: [["usuarioId", "usuarioId"]] },
     meta:       { chave: "chave" }
 };
 

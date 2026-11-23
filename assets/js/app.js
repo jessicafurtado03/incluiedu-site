@@ -388,7 +388,33 @@ Paginas.dashboardProfessor = async () => {
             <a class="btn-small" href="adaptar-atividade.html?atividade=${a.id}">Adaptar</a>
         </div>`).join("") : `<p class="empty">Nenhuma atividade ainda. <a href="nova-atividade.html">Criar a primeira</a>.</p>`;
     resumoResultados(d.resultados, $("#resumoResultados"));
+    await engajamentoTurma(d.alunos);
 };
+
+/* Pontos, dias e tempo de estudo de cada aluno e de cada turma */
+async function engajamentoTurma(alunos) {
+    const alvo = $("#engajamentoTurma");
+    if (!alvo || typeof Engaja === "undefined") return;
+    const contas = (await DB.onde("usuarios", "professorId", App.usuario.id)).filter(u => u.tipo === "aluno");
+    if (!contas.length) { alvo.innerHTML = `<p class="empty">Quando seus alunos entrarem com a conta deles, os pontos, a sequência de dias e o tempo de estudo aparecem aqui.</p>`; return; }
+    const linhas = [];
+    for (const u of contas) {
+        const r = await Engaja.resumo(u.id);
+        const ficha = alunos.find(a => a.id === u.alunoId) || {};
+        linhas.push({ nome: ficha.nome || u.nome, turma: ficha.turma || "Sem turma", alunoId: u.alunoId, r });
+    }
+    const turmas = {};
+    linhas.forEach(l => { const t = turmas[l.turma] = turmas[l.turma] || { alunos: 0, pontos: 0, min: 0, ativos: 0 }; t.alunos++; t.pontos += l.r.pontos; t.min += l.r.minSemana; if (l.r.minSemana > 0 || l.r.ultimos7.some(d => d.pts)) t.ativos++; });
+    alvo.innerHTML = `
+        <h3>Por turma</h3>
+        <div class="tabela-rolar"><table class="tabela-engaja"><thead><tr><th>Turma</th><th>Alunos</th><th>Pontos</th><th>Min. na semana</th><th>Média min./aluno</th><th>Ativos na semana</th></tr></thead><tbody>
+        ${Object.entries(turmas).map(([t, v]) => `<tr><td>${esc(t)}</td><td>${v.alunos}</td><td>${v.pontos}</td><td>${v.min}</td><td>${Math.round(v.min / v.alunos)}</td><td>${v.ativos}/${v.alunos}</td></tr>`).join("")}
+        </tbody></table></div>
+        <h3>Por aluno</h3>
+        <div class="tabela-rolar"><table class="tabela-engaja" id="tabelaEngajaAlunos"><thead><tr><th>Aluno</th><th>Turma</th><th>🏅 Pontos</th><th>🔥 Sequência</th><th>📚 Dias</th><th>⏱️ Hoje</th><th>📆 Semana</th><th>Últimos 7 dias</th></tr></thead><tbody>
+        ${linhas.sort((a, b) => b.r.pontos - a.r.pontos).map(l => `<tr><td>${l.alunoId ? `<a href="perfil-aluno.html?id=${l.alunoId}">${esc(l.nome)}</a>` : esc(l.nome)}</td><td>${esc(l.turma)}</td><td>${l.r.pontos}</td><td>${l.r.sequencia} ${l.r.sequencia === 1 ? "dia" : "dias"}</td><td>${l.r.diasEstudados}</td><td>${l.r.minHoje} min</td><td>${l.r.minSemana} min</td><td><span class="mini-barras" aria-label="Minutos por dia: ${l.r.ultimos7.map(d => d.min).join(", ")}">${l.r.ultimos7.map(d => `<i style="height:${Math.max(10, d.min / Math.max(1, ...l.r.ultimos7.map(x => x.min)) * 100)}%" class="${d.min || d.pts ? "on" : ""}"></i>`).join("")}</span></td></tr>`).join("")}
+        </tbody></table></div>`;
+}
 
 function resumoResultados(resultados, alvo) {
     if (!alvo) return;
@@ -896,6 +922,13 @@ Paginas.dashboardAluno = async () => {
         const ok = c.teste(feitas, estrelas);
         return `<div class="conquista ${ok ? "ganha" : ""}" title="${esc(c.desc)}"><span aria-hidden="true">${c.icone}</span><strong>${esc(c.nome)}</strong><small>${ok ? "Conquistada!" : esc(c.desc)}</small></div>`;
     }).join("");
+    const painel = $("#painelEngajamento");
+    if (painel && typeof Engaja !== "undefined") {
+        const desenhar = async () => { painel.innerHTML = Engaja.painelAluno(await Engaja.resumo(App.usuario.id)); };
+        await desenhar();
+        document.addEventListener("pontos-ganhos", desenhar);
+        setInterval(desenhar, 60000);
+    }
     const ordem = adaptacoes.slice().sort((a, b) => Number(a.concluida) - Number(b.concluida));
     $("#atividadesAluno").innerHTML = ordem.length ? ordem.map(a => {
         const atv = atividades.find(t => t.id === a.atividadeId) || { titulo: "Atividade" };
@@ -1028,6 +1061,7 @@ Paginas.atividadeAluno = async () => {
         adaptacao = Object.assign({}, adaptacao, { respostas, acertos, concluida: true, estrelas: Math.max(estrelas, adaptacao.estrelas || 0), concluidaEm: new Date().toISOString() });
         await DB.salvar("adaptacoes", adaptacao);
         celebrar(adaptacao.estrelas);
+        if (typeof Engaja !== "undefined") await Engaja.ganhar("atv:" + adaptacao.id, 20 + (erros ? 0 : 10), "Atividade: " + atv.titulo, { tipo: "tarefa", bonus: !erros });
     });
     $("#btnFoco").addEventListener("click", e => {
         const on = document.body.classList.toggle("modo-foco");
@@ -1238,7 +1272,9 @@ Paginas.sugestoesProfessor = async () => {
         preencherUsuario();
         ligarModelos();
         if (App.usuario && App.usuario.tipo === "professor") document.querySelectorAll("[data-modelo], [data-so-professor-logado]").forEach(b => { b.hidden = false; });
+        if (typeof Engaja !== "undefined") Engaja.iniciar(App.usuario);
         if (typeof Interativo !== "undefined") Interativo.iniciar();
+        if (typeof Jogos !== "undefined") Jogos.iniciar();
         iniciarSugestoes();
         document.querySelectorAll("[data-folha-exemplo]").forEach(el => {
             const ex = DADOS_EXEMPLOS.adaptacoes[0], atv = DADOS_EXEMPLOS.atividades.find(t => t.ref === ex.atividade);

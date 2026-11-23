@@ -411,7 +411,9 @@ const Interativo = (function () {
         });
         if (opcoes.estado) ctrls.forEach((c, i) => c && opcoes.estado[i] !== undefined && c.set(opcoes.estado[i]));
         raiz.addEventListener("int-mudou", () => { if (opcoes.aoMudar) opcoes.aoMudar(ctrls.map(c => c ? c.valor() : null)); });
+        let tentativa = 0;
         const conferir = () => {
+            tentativa++;
             let total = 0, certos = 0, faltando = 0;
             raiz.querySelectorAll(".int-item-q").forEach((li, i) => {
                 const c = ctrls[i]; const ret = li.querySelector(".int-retorno");
@@ -432,6 +434,7 @@ const Interativo = (function () {
                 <p>${faltando ? `Faltam ${faltando} ${faltando === 1 ? "item" : "itens"}. Você consegue! ` : ""}${total ? `Você acertou ${certos} de ${total}. ` : ""}${pct >= .99 && !faltando ? "Parabéns, você arrasou! 🎉" : "Cada tentativa ajuda o cérebro a aprender. 💪"}</p>`;
             raiz.querySelector(".int-denovo").hidden = pct >= .99 && !faltando;
             if (opcoes.aoConferir) opcoes.aoConferir({ certos, total, faltando, estrelas, valores: ctrls.map(c => c ? c.valor() : null) });
+            raiz.dispatchEvent(new CustomEvent("int-conferido", { bubbles: true, detail: { certos, total, faltando, estrelas, tentativa } }));
             return { certos, total, faltando, estrelas };
         };
         raiz.querySelector(".int-conferir").addEventListener("click", conferir);
