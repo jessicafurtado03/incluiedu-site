@@ -261,3 +261,23 @@ document.querySelectorAll("[data-ano]").forEach(el => { el.textContent = new Dat
     s.onerror = () => area.remove();
     document.body.appendChild(s);
 })();
+
+/* ---------- ÍNDICE "NESTA PÁGINA": fechado em telas estreitas, sempre aberto no computador ---------- */
+(function () {
+    const caixa = document.querySelector(".indice-caixa");
+    if (!caixa) return;
+    const mq = window.matchMedia("(max-width: 1100px)");
+    const ajustar = () => { caixa.open = !mq.matches; };
+    ajustar();
+    mq.addEventListener ? mq.addEventListener("change", ajustar) : mq.addListener(ajustar);
+    caixa.querySelector("summary").addEventListener("click", ev => { if (!mq.matches) ev.preventDefault(); });
+    caixa.querySelectorAll("a").forEach(a => a.addEventListener("click", ev => {
+        if (!mq.matches) return;
+        const alvo = document.querySelector(a.getAttribute("href"));
+        if (!alvo) return;
+        ev.preventDefault();
+        caixa.open = false;   /* fecha antes de rolar, para o destino não "pular" */
+        history.replaceState(null, "", a.getAttribute("href"));
+        requestAnimationFrame(() => alvo.scrollIntoView({ block: "start", behavior: document.body.classList.contains("sem-movimento") ? "auto" : "smooth" }));
+    }));
+})();
